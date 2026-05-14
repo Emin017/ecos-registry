@@ -1,0 +1,27 @@
+{
+  "schema_version": 2,
+  "tools": [
+    {
+      "name": "yosys",
+      "display_name": "Yosys",
+      "description": "Yosys from the OSS CAD Suite distribution.",
+      "category": "synthesis",
+      "homepage": "https://github.com/YosysHQ/oss-cad-suite-build",
+      "versions": [
+        {
+          "version": "2026-05-13",
+          "platforms": {
+            "linux-x86_64": {
+              "url": "https://github.com/YosysHQ/oss-cad-suite-build/releases/download/2026-05-13/oss-cad-suite-linux-x64-20260513.tgz",
+              "sha256": "97e86fb5acce4071075854b82d9c05b78349d8afa4993fd559092986de485ea2",
+              "size": 711743679,
+              "strip_prefix": "oss-cad-suite"
+            }
+          },
+          "requires": []
+        }
+      ]
+    }
+  ],
+  "pdks": []
+}
