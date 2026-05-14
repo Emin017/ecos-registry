@@ -23,5 +23,32 @@
       ]
     }
   ],
-  "pdks": []
+  "pdks": [
+    {
+      "id": "ics55",
+      "display_name": "ICsprout 55nm PDK",
+      "description": "ICsprout 55nm open-source process design kit.",
+      "category": "pdk",
+      "homepage": "https://github.com/openecos-projects/icsprout55-pdk",
+      "versions": [
+        {
+          "version": "1.10.100",
+          "platforms": {
+            "all-platform": {
+              "url": "https://github.com/openecos-projects/icsprout55-pdk/archive/refs/tags/v1.10.100.tar.gz",
+              "sha256": "c249338cd909ac867d94909406edc47f2efec6b5a82e964f8d59d8770d456633",
+              "size": 49757262,
+              "strip_prefix": "icsprout55-pdk-1.10.100",
+              "post_install": [
+                {
+                  "command": ["make", "unzip"],
+                  "cwd": "."
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
 }
