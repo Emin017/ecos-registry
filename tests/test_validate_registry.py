@@ -402,6 +402,7 @@ class ValidateRegistryUrlTests(unittest.TestCase):
 
     def test_url_checking_reports_malformed_url_without_crashing(self) -> None:
         registry = valid_registry()
+        registry["pdks"] = []
         tool_platform = registry["tools"][0]["versions"][0]["platforms"]["linux-x86_64"]
         assert isinstance(tool_platform, dict)
         tool_platform["url"] = "https://exa mple.com/yosys.tar.gz"
