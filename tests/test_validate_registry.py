@@ -232,6 +232,7 @@ class ValidateRegistryOfflineTests(unittest.TestCase):
             {"command": ["make"], "cwd": ".."},
             {"command": ["make"], "cwd": "C:\\tmp"},
             {"command": ["make"], "cwd": "\\tmp"},
+            {"command": ["make"], "cwd": "C:tmp"},
         ]
 
         errors = self.errors_for(registry)
@@ -263,6 +264,10 @@ class ValidateRegistryOfflineTests(unittest.TestCase):
         self.assert_has_error(
             errors,
             "pdks[0].versions[0].platforms.all-platform.post_install[5].cwd: must be a non-empty relative path",
+        )
+        self.assert_has_error(
+            errors,
+            "pdks[0].versions[0].platforms.all-platform.post_install[6].cwd: must be a non-empty relative path",
         )
 
 

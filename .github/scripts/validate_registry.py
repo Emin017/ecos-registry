@@ -354,7 +354,12 @@ def _is_non_empty_string(value: object) -> bool:
 def _post_install_cwd_error(value: object) -> str | None:
     if not isinstance(value, str) or not value:
         return "must be a non-empty relative path"
-    if Path(value).is_absolute() or ntpath.isabs(value):
+    if (
+        value.startswith(("/", "\\"))
+        or Path(value).is_absolute()
+        or ntpath.isabs(value)
+        or ntpath.splitdrive(value)[0]
+    ):
         return "must be a non-empty relative path"
     normalized = posixpath.normpath(value.replace("\\", "/"))
     if normalized == ".." or normalized.startswith("../"):
