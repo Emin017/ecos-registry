@@ -118,7 +118,7 @@
           "version": "0.7.0-ecos",
           "platforms": {
             "all-platform": {
-              "url": "https://raw.githubusercontent.com/Luyoung0001/ecos-registry/main/assets/surfer-web-assets-0.7.0-ecos.zip",
+              "url": "https://github.com/openecos-projects/ecos-surfer-assets/releases/download/v0.7.0-ecos/surfer-web-assets-0.7.0-ecos.zip",
               "sha256": "3a8cce2c9ef57fcdbecca2371c533e811eef5a31c0f76af10d05d7cc6220b095",
               "size": 4654743,
               "strip_prefix": "surfer-web-assets-0.7.0-ecos"
