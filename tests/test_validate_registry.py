@@ -229,6 +229,7 @@ class ValidateRegistryOfflineTests(unittest.TestCase):
             {},
             {"command": []},
             {"command": ["make", 12], "cwd": "/tmp/build"},
+            {"command": ["make"], "cwd": ".."},
         ]
 
         errors = self.errors_for(registry)
@@ -248,6 +249,10 @@ class ValidateRegistryOfflineTests(unittest.TestCase):
         self.assert_has_error(
             errors,
             "pdks[0].versions[0].platforms.all-platform.post_install[2].cwd: must be a non-empty relative path",
+        )
+        self.assert_has_error(
+            errors,
+            "pdks[0].versions[0].platforms.all-platform.post_install[3].cwd: must stay inside the extracted resource",
         )
 
 

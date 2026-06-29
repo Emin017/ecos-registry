@@ -6,6 +6,7 @@ import argparse
 from datetime import date
 import json
 from pathlib import Path
+import posixpath
 import re
 import sys
 from typing import Any
@@ -327,8 +328,10 @@ def _validate_post_install(value: object, path: str, errors: list[str]) -> None:
             errors.append(f"{command_path}.command: missing required field")
         else:
             _validate_command_array(command["command"], f"{command_path}.command", errors)
-        if "cwd" in command and not _is_non_empty_relative_path(command["cwd"]):
-            errors.append(f"{command_path}.cwd: must be a non-empty relative path")
+        if "cwd" in command:
+            error = _post_install_cwd_error(command["cwd"])
+            if error is not None:
+                errors.append(f"{command_path}.cwd: {error}")
 
 
 def _validate_command_array(value: object, path: str, errors: list[str]) -> None:
@@ -347,8 +350,13 @@ def _is_non_empty_string(value: object) -> bool:
     return isinstance(value, str) and bool(value)
 
 
-def _is_non_empty_relative_path(value: object) -> bool:
-    return _is_non_empty_string(value) and not Path(value).is_absolute()
+def _post_install_cwd_error(value: object) -> str | None:
+    if not _is_non_empty_string(value) or Path(value).is_absolute():
+        return "must be a non-empty relative path"
+    normalized = posixpath.normpath(value.replace("\\", "/"))
+    if normalized == ".." or normalized.startswith("../"):
+        return "must stay inside the extracted resource"
+    return None
 
 
 def parse_args() -> argparse.Namespace:
