@@ -372,10 +372,16 @@ def _validate_platform_url(value: object, path: str, errors: list[str]) -> bool:
     if not _is_non_empty_string(value):
         errors.append(f"{path}: must be a non-empty string")
         return False
+    if _contains_url_control_character(value):
+        errors.append(
+            f"{path}: malformed URL: must not contain whitespace or control characters"
+        )
+        return False
 
     try:
         parsed = urlparse(value)
         _ = parsed.port
+        hostname = parsed.hostname
     except ValueError as exc:
         errors.append(f"{path}: malformed URL: {exc}")
         return False
@@ -386,6 +392,9 @@ def _validate_platform_url(value: object, path: str, errors: list[str]) -> bool:
         valid = False
     if not parsed.netloc:
         errors.append(f"{path}: must include a host")
+        valid = False
+    elif hostname is None:
+        errors.append(f"{path}: malformed URL: must include a valid host")
         valid = False
     if not parsed.path.lower().endswith(ARCHIVE_SUFFIXES):
         errors.append(f"{path}: unsupported archive suffix")
@@ -437,6 +446,10 @@ def _validate_command_array(value: object, path: str, errors: list[str]) -> None
 
 def _is_non_empty_string(value: object) -> TypeGuard[str]:
     return isinstance(value, str) and bool(value)
+
+
+def _contains_url_control_character(value: str) -> bool:
+    return any(char.isspace() or ord(char) < 32 or ord(char) == 127 for char in value)
 
 
 def _post_install_cwd_error(value: object) -> str | None:

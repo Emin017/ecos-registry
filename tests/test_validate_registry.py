@@ -226,18 +226,26 @@ class ValidateRegistryOfflineTests(unittest.TestCase):
         self.assert_has_error(errors, "tools[0].versions[0].platforms.linux-x86_64.unknown: unknown platform field")
         self.assert_has_error(errors, "pdks[0].versions[0].platforms.all-platform.url: unsupported archive suffix")
 
-    def test_malformed_url_parse_error_is_pathful(self) -> None:
-        registry = valid_registry()
-        platform = registry["tools"][0]["versions"][0]["platforms"]["linux-x86_64"]
-        assert isinstance(platform, dict)
-        platform["url"] = "https://[bad/foo.tar.gz"
+    def test_malformed_url_errors_are_pathful_offline(self) -> None:
+        for url in (
+            "https://[bad/foo.tar.gz",
+            "https://exa mple.com/yosys.tar.gz",
+            "http://:80/yosys.tar.gz",
+        ):
+            with self.subTest(url=url):
+                registry = valid_registry()
+                platform = registry["tools"][0]["versions"][0]["platforms"][
+                    "linux-x86_64"
+                ]
+                assert isinstance(platform, dict)
+                platform["url"] = url
 
-        errors = self.errors_for(registry)
+                errors = self.errors_for(registry)
 
-        self.assert_has_error(
-            errors,
-            "tools[0].versions[0].platforms.linux-x86_64.url: malformed URL",
-        )
+                self.assert_has_error(
+                    errors,
+                    "tools[0].versions[0].platforms.linux-x86_64.url: malformed URL",
+                )
 
     def test_post_install_commands_are_validated(self) -> None:
         registry = valid_registry()
@@ -414,18 +422,12 @@ class ValidateRegistryUrlTests(unittest.TestCase):
         self.assertIn("GET returned HTTP 404", status_error)
 
     def test_url_checking_reports_malformed_url_without_crashing(self) -> None:
-        registry = valid_registry()
-        registry["pdks"] = []
-        tool_platform = registry["tools"][0]["versions"][0]["platforms"]["linux-x86_64"]
-        assert isinstance(tool_platform, dict)
-        tool_platform["url"] = "https://exa mple.com/yosys.tar.gz"
-
-        errors = validate_registry.validate_registry_data(registry, check_urls=True)
-
-        self.assert_has_error(
-            errors,
-            "tools[0].versions[0].platforms.linux-x86_64.url: URL check failed for https://exa mple.com/yosys.tar.gz",
+        error = validate_registry.check_url_reachable(
+            "https://exa mple.com/yosys.tar.gz"
         )
+
+        self.assertIsNotNone(error)
+        self.assertIn("failed", error)
 
     def assert_has_error(self, errors: list[str], expected: str) -> None:
         self.assertTrue(
