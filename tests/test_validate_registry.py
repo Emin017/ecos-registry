@@ -226,6 +226,19 @@ class ValidateRegistryOfflineTests(unittest.TestCase):
         self.assert_has_error(errors, "tools[0].versions[0].platforms.linux-x86_64.unknown: unknown platform field")
         self.assert_has_error(errors, "pdks[0].versions[0].platforms.all-platform.url: unsupported archive suffix")
 
+    def test_malformed_url_parse_error_is_pathful(self) -> None:
+        registry = valid_registry()
+        platform = registry["tools"][0]["versions"][0]["platforms"]["linux-x86_64"]
+        assert isinstance(platform, dict)
+        platform["url"] = "https://[bad/foo.tar.gz"
+
+        errors = self.errors_for(registry)
+
+        self.assert_has_error(
+            errors,
+            "tools[0].versions[0].platforms.linux-x86_64.url: malformed URL",
+        )
+
     def test_post_install_commands_are_validated(self) -> None:
         registry = valid_registry()
         platform = registry["pdks"][0]["versions"][0]["platforms"]["all-platform"]

@@ -16,6 +16,7 @@ import socket
 import sys
 from typing import Any
 from typing import Protocol
+from typing import TypeGuard
 from urllib.error import HTTPError, URLError
 from urllib.parse import urlparse
 from urllib.request import Request, urlopen
@@ -372,7 +373,13 @@ def _validate_platform_url(value: object, path: str, errors: list[str]) -> bool:
         errors.append(f"{path}: must be a non-empty string")
         return False
 
-    parsed = urlparse(value)
+    try:
+        parsed = urlparse(value)
+        _ = parsed.port
+    except ValueError as exc:
+        errors.append(f"{path}: malformed URL: {exc}")
+        return False
+
     valid = True
     if parsed.scheme not in ("http", "https"):
         errors.append(f"{path}: must use http or https")
@@ -428,7 +435,7 @@ def _validate_command_array(value: object, path: str, errors: list[str]) -> None
             errors.append(f"{path}[{index}]: must be non-empty")
 
 
-def _is_non_empty_string(value: object) -> bool:
+def _is_non_empty_string(value: object) -> TypeGuard[str]:
     return isinstance(value, str) and bool(value)
 
 
