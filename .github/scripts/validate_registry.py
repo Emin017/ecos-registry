@@ -6,6 +6,7 @@ import argparse
 from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import date
+from http.client import HTTPException
 import json
 import ntpath
 from pathlib import Path
@@ -479,8 +480,8 @@ def _request_url(
     headers: dict[str, str] | None = None,
     read_limit: int | None = None,
 ) -> str | None:
-    request = Request(url, headers=headers or {}, method=method)
     try:
+        request = Request(url, headers=headers or {}, method=method)
         with opener(request, timeout) as response:
             if not 200 <= response.status < 300:
                 return f"{method} returned HTTP {response.status}"
@@ -496,6 +497,8 @@ def _request_url(
         if isinstance(reason, TimeoutError | socket.timeout):
             return f"{method} timed out: {reason}"
         return f"{method} failed: {reason}"
+    except (HTTPException, ValueError) as exc:
+        return f"{method} failed: {exc}"
     except OSError as exc:
         return f"{method} failed: {exc}"
 

@@ -400,6 +400,19 @@ class ValidateRegistryUrlTests(unittest.TestCase):
         self.assertIsNotNone(status_error)
         self.assertIn("GET returned HTTP 404", status_error)
 
+    def test_url_checking_reports_malformed_url_without_crashing(self) -> None:
+        registry = valid_registry()
+        tool_platform = registry["tools"][0]["versions"][0]["platforms"]["linux-x86_64"]
+        assert isinstance(tool_platform, dict)
+        tool_platform["url"] = "https://exa mple.com/yosys.tar.gz"
+
+        errors = validate_registry.validate_registry_data(registry, check_urls=True)
+
+        self.assert_has_error(
+            errors,
+            "tools[0].versions[0].platforms.linux-x86_64.url: URL check failed for https://exa mple.com/yosys.tar.gz",
+        )
+
     def assert_has_error(self, errors: list[str], expected: str) -> None:
         self.assertTrue(
             any(expected in error for error in errors),
