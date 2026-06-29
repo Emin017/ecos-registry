@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 from datetime import date
 import json
+import ntpath
 from pathlib import Path
 import posixpath
 import re
@@ -351,7 +352,9 @@ def _is_non_empty_string(value: object) -> bool:
 
 
 def _post_install_cwd_error(value: object) -> str | None:
-    if not _is_non_empty_string(value) or Path(value).is_absolute():
+    if not isinstance(value, str) or not value:
+        return "must be a non-empty relative path"
+    if Path(value).is_absolute() or ntpath.isabs(value):
         return "must be a non-empty relative path"
     normalized = posixpath.normpath(value.replace("\\", "/"))
     if normalized == ".." or normalized.startswith("../"):
