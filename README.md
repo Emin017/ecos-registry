@@ -42,6 +42,12 @@ environment variables.
 - `yosys` currently uses the OSS CAD Suite archive. That package also contains
   `verilator`, so ECOS Studio can expose Verilator through the same installed
   tool root without downloading a separate Verilator archive.
+- `ecc-fe` is the frontend flow runtime CLI. It is not an EDA tool itself; it
+  orchestrates workspace creation, Review, Elab, Lint, Sim, and Wave metadata
+  through the tools listed below.
+- `ecc-fe-soc-*` packages are frontend SoC harness resources. They are installed
+  separately from `ecc-fe` and assembled at runtime through ECOS Studio resource
+  environment variables.
 - `slang` uses the official upstream Linux release archive.
 - `riscv-toolchain` uses the xPack RISC-V bare-metal GCC archive.
 - `surfer` must point to ECOS Studio compatible web assets containing

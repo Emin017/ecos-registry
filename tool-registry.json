@@ -2,6 +2,50 @@
   "schema_version": 2,
   "tools": [
     {
+      "name": "ecc-fe",
+      "display_name": "ECC-FE Frontend Flow",
+      "description": "ECOS frontend flow runtime CLI used by ECOS Studio to create workspaces and run Review, Elab, Lint, Sim, and Wave metadata steps.",
+      "category": "frontend",
+      "homepage": "https://github.com/openecos-projects/ecc-fe",
+      "versions": [
+        {
+          "version": "0.1.0-alpha.0-ecos",
+          "platforms": {
+            "linux-x86_64": {
+              "url": "https://raw.githubusercontent.com/Luyoung0001/ecos-registry/main/assets/ecc-fe-0.1.0-alpha.0-ecos.tar.gz",
+              "sha256": "0242eec70b324de5ccf3ea7497b8f6ca4ebd0fc9a104458831b656c2af68aede",
+              "size": 24347354,
+              "strip_prefix": "ecc-fe-0.1.0-alpha.0-ecos"
+            }
+          },
+          "requires": [
+            "tool:ecc-fe-soc-ysyx-am"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "ecc-fe-soc-ysyx-am",
+      "display_name": "ECC-FE YSYX AM SoC Harness",
+      "description": "Installable SoC harness resource used by ECC-FE simulation flows for CPU tests, RT-Thread, and CoreMark.",
+      "category": "frontend",
+      "homepage": "https://github.com/openecos-projects/ecc-fe",
+      "versions": [
+        {
+          "version": "0.1.0-alpha.0-ecos",
+          "platforms": {
+            "all-platform": {
+              "url": "https://raw.githubusercontent.com/Luyoung0001/ecos-registry/main/assets/ecc-fe-soc-ysyx-am-0.1.0-alpha.0-ecos.tar.gz",
+              "sha256": "2a6f5e5df33aff55d218cc1f4b1c28d191620ab0805abd98f38b66849711f70e",
+              "size": 21133977,
+              "strip_prefix": "ecc-fe-soc-ysyx-am-0.1.0-alpha.0-ecos"
+            }
+          },
+          "requires": []
+        }
+      ]
+    },
+    {
       "name": "yosys",
       "display_name": "Yosys",
       "description": "Yosys from the OSS CAD Suite distribution.",
