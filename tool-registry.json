@@ -21,6 +21,68 @@
           "requires": []
         }
       ]
+    },
+    {
+      "name": "slang",
+      "display_name": "Slang",
+      "description": "SystemVerilog compiler and elaboration frontend used by ECC-FE ELAB and lint diagnostics.",
+      "category": "frontend",
+      "homepage": "https://github.com/MikePopoloski/slang",
+      "versions": [
+        {
+          "version": "11.0",
+          "platforms": {
+            "linux-x86_64": {
+              "url": "https://github.com/MikePopoloski/slang/releases/download/v11.0/slang-linux-x86_64.tar.gz",
+              "sha256": "951a170e10e25e54c91565030acfdfc11c3226714ebf225a18ad4166a898d8a4",
+              "size": 3514870
+            }
+          },
+          "requires": []
+        }
+      ]
+    },
+    {
+      "name": "riscv-toolchain",
+      "display_name": "RISC-V GNU Toolchain",
+      "description": "xPack RISC-V bare-metal GCC toolchain used to build CPU tests, RT-Thread images, and CoreMark programs.",
+      "category": "toolchain",
+      "homepage": "https://github.com/xpack-dev-tools/riscv-none-elf-gcc-xpack",
+      "versions": [
+        {
+          "version": "15.2.0-1",
+          "platforms": {
+            "linux-x86_64": {
+              "url": "https://github.com/xpack-dev-tools/riscv-none-elf-gcc-xpack/releases/download/v15.2.0-1/xpack-riscv-none-elf-gcc-15.2.0-1-linux-x64.tar.gz",
+              "sha256": "aaaa8060c914851a3e5ee1ba82cc3d6f80972f90638a05c6e823a37557a33758",
+              "size": 433494794,
+              "strip_prefix": "xpack-riscv-none-elf-gcc-15.2.0-1"
+            }
+          },
+          "requires": []
+        }
+      ]
+    },
+    {
+      "name": "surfer",
+      "display_name": "Surfer Web Assets",
+      "description": "Offline Surfer waveform viewer web assets used by ECOS Studio Wave.",
+      "category": "viewer",
+      "homepage": "https://gitlab.com/surfer-project/surfer",
+      "versions": [
+        {
+          "version": "0.7.0-ecos",
+          "platforms": {
+            "all-platform": {
+              "url": "https://luyoung0001.github.io/ecos-registry/assets/surfer-web-assets-0.7.0-ecos.zip",
+              "sha256": "3a8cce2c9ef57fcdbecca2371c533e811eef5a31c0f76af10d05d7cc6220b095",
+              "size": 4654743,
+              "strip_prefix": "surfer-web-assets-0.7.0-ecos"
+            }
+          },
+          "requires": []
+        }
+      ]
     }
   ],
   "pdks": [
@@ -41,7 +103,10 @@
               "strip_prefix": "icsprout55-pdk-1.10.100",
               "post_install": [
                 {
-                  "command": ["make", "unzip"],
+                  "command": [
+                    "make",
+                    "unzip"
+                  ],
                   "cwd": "."
                 }
               ]
