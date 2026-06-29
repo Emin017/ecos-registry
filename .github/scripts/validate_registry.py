@@ -3,15 +3,21 @@
 from __future__ import annotations
 
 import argparse
+from collections.abc import Callable
+from dataclasses import dataclass
 from datetime import date
 import json
 import ntpath
 from pathlib import Path
 import posixpath
 import re
+import socket
 import sys
 from typing import Any
+from typing import Protocol
+from urllib.error import HTTPError, URLError
 from urllib.parse import urlparse
+from urllib.request import Request, urlopen
 
 
 ALLOWED_TOP_LEVEL_KEYS = frozenset(("schema_version", "tools", "pdks"))
@@ -41,29 +47,86 @@ IDENTIFIER_RE = re.compile(r"^[a-z0-9_-]+$")
 SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
 DATE_VERSION_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 NUMERIC_VERSION_RE = re.compile(r"^\d+(?:\.\d+)+$")
+URL_TIMEOUT_SECONDS = 5.0
 
 
-def validate_registry(path: Path) -> list[str]:
+class UrlResponse(Protocol):
+    status: int
+
+    def __enter__(self) -> "UrlResponse": ...
+
+    def __exit__(self, *args: object) -> None: ...
+
+    def read(self, size: int | None = None) -> bytes: ...
+
+
+@dataclass(frozen=True)
+class AssetUrl:
+    path: str
+    url: str
+
+
+UrlOpener = Callable[[Request, float], UrlResponse]
+UrlChecker = Callable[[str], str | None]
+
+
+def validate_registry(
+    path: Path,
+    *,
+    check_urls: bool = False,
+    url_checker: UrlChecker | None = None,
+) -> list[str]:
     try:
         data = json.loads(path.read_text(encoding="utf-8"))
     except json.JSONDecodeError as exc:
         return [f"$: invalid JSON: {exc.msg}"]
-    return validate_registry_data(data)
+    return validate_registry_data(data, check_urls=check_urls, url_checker=url_checker)
 
 
-def validate_registry_data(data: object) -> list[str]:
+def validate_registry_data(
+    data: object,
+    *,
+    check_urls: bool = False,
+    url_checker: UrlChecker | None = None,
+) -> list[str]:
     errors: list[str] = []
     if not isinstance(data, dict):
         return ["$: must be a JSON object"]
 
+    asset_urls: list[AssetUrl] = []
     _validate_top_level(data, errors)
     tools = _array_or_none(data.get("tools"), "tools", errors)
     pdks = _array_or_none(data.get("pdks"), "pdks", errors)
 
     if tools is not None:
-        _validate_entries(tools, "tools", "tool", "name", TOOL_REQUIRED_FIELDS, errors)
+        _validate_entries(
+            tools,
+            "tools",
+            "tool",
+            "name",
+            TOOL_REQUIRED_FIELDS,
+            errors,
+            asset_urls,
+        )
     if pdks is not None:
-        _validate_entries(pdks, "pdks", "PDK", "id", PDK_REQUIRED_FIELDS, errors)
+        _validate_entries(
+            pdks,
+            "pdks",
+            "PDK",
+            "id",
+            PDK_REQUIRED_FIELDS,
+            errors,
+            asset_urls,
+        )
+
+    if check_urls:
+        checker = url_checker or check_url_reachable
+        for asset_url in asset_urls:
+            error = checker(asset_url.url)
+            if error is not None:
+                errors.append(
+                    f"{asset_url.path}: URL check failed for {asset_url.url}: {error}"
+                )
 
     return errors
 
@@ -91,6 +154,7 @@ def _validate_entries(
     id_field: str,
     required_fields: tuple[str, ...],
     errors: list[str],
+    asset_urls: list[AssetUrl],
 ) -> None:
     seen_ids: dict[str, str] = {}
     for index, entry in enumerate(entries):
@@ -126,6 +190,7 @@ def _validate_entries(
             f"{entry_path}.versions",
             entry_type="tool" if collection_path == "tools" else "pdk",
             errors=errors,
+            asset_urls=asset_urls,
         )
 
 
@@ -164,6 +229,7 @@ def _validate_versions(
     path: str,
     entry_type: str,
     errors: list[str],
+    asset_urls: list[AssetUrl],
 ) -> None:
     seen_versions: dict[str, str] = {}
     version_values: list[str] = []
@@ -197,7 +263,13 @@ def _validate_versions(
         if not isinstance(platforms, dict) or not platforms:
             errors.append(f"{version_path}.platforms: must be a non-empty object")
             continue
-        _validate_platforms(platforms, f"{version_path}.platforms", entry_type, errors)
+        _validate_platforms(
+            platforms,
+            f"{version_path}.platforms",
+            entry_type,
+            errors,
+            asset_urls,
+        )
 
     _validate_version_order(version_values, path, errors)
 
@@ -257,6 +329,7 @@ def _validate_platforms(
     path: str,
     entry_type: str,
     errors: list[str],
+    asset_urls: list[AssetUrl],
 ) -> None:
     for platform_key, platform in platforms.items():
         if not _is_non_empty_string(platform_key):
@@ -276,7 +349,9 @@ def _validate_platforms(
             if field not in ALLOWED_PLATFORM_FIELDS:
                 errors.append(f"{platform_path}.{field}: unknown platform field")
 
-        _validate_platform_url(platform.get("url"), f"{platform_path}.url", errors)
+        url_path = f"{platform_path}.url"
+        if _validate_platform_url(platform.get("url"), url_path, errors):
+            asset_urls.append(AssetUrl(path=url_path, url=platform["url"]))
         _validate_sha256(platform.get("sha256"), f"{platform_path}.sha256", errors)
         _validate_size(platform.get("size"), f"{platform_path}.size", errors)
         if "strip_prefix" in platform and not _is_non_empty_string(
@@ -291,18 +366,23 @@ def _validate_platforms(
             )
 
 
-def _validate_platform_url(value: object, path: str, errors: list[str]) -> None:
+def _validate_platform_url(value: object, path: str, errors: list[str]) -> bool:
     if not _is_non_empty_string(value):
         errors.append(f"{path}: must be a non-empty string")
-        return
+        return False
 
     parsed = urlparse(value)
+    valid = True
     if parsed.scheme not in ("http", "https"):
         errors.append(f"{path}: must use http or https")
+        valid = False
     if not parsed.netloc:
         errors.append(f"{path}: must include a host")
+        valid = False
     if not parsed.path.lower().endswith(ARCHIVE_SUFFIXES):
         errors.append(f"{path}: unsupported archive suffix")
+        valid = False
+    return valid
 
 
 def _validate_sha256(value: object, path: str, errors: list[str]) -> None:
@@ -367,6 +447,59 @@ def _post_install_cwd_error(value: object) -> str | None:
     return None
 
 
+def _open_url(request: Request, timeout: float) -> UrlResponse:
+    return urlopen(request, timeout=timeout)
+
+
+def check_url_reachable(
+    url: str,
+    *,
+    opener: UrlOpener = _open_url,
+    timeout: float = URL_TIMEOUT_SECONDS,
+) -> str | None:
+    head_error = _request_url(url, "HEAD", opener=opener, timeout=timeout)
+    if head_error is None:
+        return None
+    return _request_url(
+        url,
+        "GET",
+        opener=opener,
+        timeout=timeout,
+        headers={"Range": "bytes=0-0"},
+        read_limit=1,
+    )
+
+
+def _request_url(
+    url: str,
+    method: str,
+    *,
+    opener: UrlOpener,
+    timeout: float,
+    headers: dict[str, str] | None = None,
+    read_limit: int | None = None,
+) -> str | None:
+    request = Request(url, headers=headers or {}, method=method)
+    try:
+        with opener(request, timeout) as response:
+            if not 200 <= response.status < 300:
+                return f"{method} returned HTTP {response.status}"
+            if read_limit is not None:
+                response.read(read_limit)
+            return None
+    except HTTPError as exc:
+        return f"{method} returned HTTP {exc.code}"
+    except (TimeoutError, socket.timeout) as exc:
+        return f"{method} timed out: {exc}"
+    except URLError as exc:
+        reason = exc.reason
+        if isinstance(reason, TimeoutError | socket.timeout):
+            return f"{method} timed out: {reason}"
+        return f"{method} failed: {reason}"
+    except OSError as exc:
+        return f"{method} failed: {exc}"
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Validate an ECOS registry JSON file.")
     parser.add_argument(
@@ -376,12 +509,17 @@ def parse_args() -> argparse.Namespace:
         default=Path("tool-registry.json"),
         help="Path to the registry JSON file.",
     )
+    parser.add_argument(
+        "--check-urls",
+        action="store_true",
+        help="Check lightweight reachability of each platform asset URL.",
+    )
     return parser.parse_args()
 
 
 def main() -> None:
     args = parse_args()
-    errors = validate_registry(args.registry)
+    errors = validate_registry(args.registry, check_urls=args.check_urls)
     if errors:
         for error in errors:
             print(error, file=sys.stderr)
