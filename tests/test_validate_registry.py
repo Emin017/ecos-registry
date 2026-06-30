@@ -89,11 +89,13 @@ class ValidateRegistryOfflineTests(unittest.TestCase):
         )
 
     def test_current_registry_passes_offline_validation(self) -> None:
+        """Validate that the checked-in registry satisfies offline format rules."""
         errors = validate_registry.validate_registry(ROOT / "tool-registry.json")
 
         self.assertEqual([], errors)
 
     def test_invalid_json_shape_reports_pathful_errors(self) -> None:
+        """Verify top-level JSON shape errors include actionable registry paths."""
         self.assert_has_error(self.errors_for([]), "$: must be a JSON object")
 
         registry = {"schema_version": 1, "tools": {}, "pdks": {}, "extra": True}
@@ -105,6 +107,7 @@ class ValidateRegistryOfflineTests(unittest.TestCase):
         self.assert_has_error(errors, "extra: unknown top-level key")
 
     def test_required_fields_and_identifier_rules_are_enforced(self) -> None:
+        """Check required entry fields and stable identifier naming constraints."""
         registry = valid_registry()
         tool = registry["tools"][0]
         assert isinstance(tool, dict)
@@ -123,6 +126,7 @@ class ValidateRegistryOfflineTests(unittest.TestCase):
         self.assert_has_error(errors, "pdks[0].id: must be a non-empty stable identifier")
 
     def test_duplicate_entry_ids_and_empty_versions_or_platforms_fail(self) -> None:
+        """Reject duplicate tool/PDK ids and empty version or platform sections."""
         registry = valid_registry()
         tool = copy.deepcopy(registry["tools"][0])
         pdk = copy.deepcopy(registry["pdks"][0])
@@ -152,6 +156,7 @@ class ValidateRegistryOfflineTests(unittest.TestCase):
         )
 
     def test_version_entries_and_ordering_are_validated(self) -> None:
+        """Ensure version metadata, requires type, and newest-first order are checked."""
         registry = valid_registry()
         tool = registry["tools"][0]
         pdk = registry["pdks"][0]
@@ -193,6 +198,7 @@ class ValidateRegistryOfflineTests(unittest.TestCase):
         )
 
     def test_platform_keys_and_fields_are_validated(self) -> None:
+        """Verify platform names, asset fields, and archive metadata constraints."""
         registry = valid_registry()
         tool_version = registry["tools"][0]["versions"][0]
         pdk_version = registry["pdks"][0]["versions"][0]
@@ -227,6 +233,7 @@ class ValidateRegistryOfflineTests(unittest.TestCase):
         self.assert_has_error(errors, "pdks[0].versions[0].platforms.all-platform.url: unsupported archive suffix")
 
     def test_malformed_url_errors_are_pathful_offline(self) -> None:
+        """Confirm malformed asset URLs fail offline with the exact platform path."""
         for url in (
             "https://[bad/foo.tar.gz",
             "https://exa mple.com/yosys.tar.gz",
@@ -248,6 +255,7 @@ class ValidateRegistryOfflineTests(unittest.TestCase):
                 )
 
     def test_post_install_commands_are_validated(self) -> None:
+        """Check post-install command arrays and cwd sandbox boundaries."""
         registry = valid_registry()
         platform = registry["pdks"][0]["versions"][0]["platforms"]["all-platform"]
         assert isinstance(platform, dict)
@@ -315,6 +323,7 @@ class FakeResponse:
 
 class ValidateRegistryUrlTests(unittest.TestCase):
     def test_url_checking_reports_registry_path_and_url(self) -> None:
+        """Ensure URL check failures include both registry path and failing URL."""
         registry = valid_registry()
 
         def checker(url: str) -> str | None:
@@ -332,6 +341,7 @@ class ValidateRegistryUrlTests(unittest.TestCase):
         )
 
     def test_url_checker_accepts_successful_head(self) -> None:
+        """Accept a successful HEAD response without issuing a fallback GET."""
         requests: list[Request] = []
 
         def opener(request: Request, timeout: float) -> FakeResponse:
@@ -349,6 +359,7 @@ class ValidateRegistryUrlTests(unittest.TestCase):
         self.assertEqual(["HEAD"], [request.get_method() for request in requests])
 
     def test_default_url_checker_passes_timeout_as_keyword(self) -> None:
+        """Verify the default urlopen adapter passes timeout as a keyword argument."""
         calls: list[float] = []
         original_urlopen = validate_registry.urlopen
 
@@ -370,6 +381,7 @@ class ValidateRegistryUrlTests(unittest.TestCase):
         self.assertEqual([7.0], calls)
 
     def test_url_checker_falls_back_to_ranged_get_without_full_download(self) -> None:
+        """Use a one-byte ranged GET fallback when HEAD is not supported."""
         requests: list[Request] = []
         get_response = FakeResponse(206)
 
@@ -397,6 +409,7 @@ class ValidateRegistryUrlTests(unittest.TestCase):
         self.assertEqual([1], get_response.read_sizes)
 
     def test_url_checker_reports_timeout_and_non_success_status(self) -> None:
+        """Report timeout and HTTP status failures from lightweight URL probes."""
         def timeout_opener(request: Request, timeout: float) -> FakeResponse:
             del request, timeout
             raise TimeoutError("timed out")
@@ -422,6 +435,7 @@ class ValidateRegistryUrlTests(unittest.TestCase):
         self.assertIn("GET returned HTTP 404", status_error)
 
     def test_url_checking_reports_malformed_url_without_crashing(self) -> None:
+        """Return a normal URL-check error for malformed URLs instead of crashing."""
         error = validate_registry.check_url_reachable(
             "https://exa mple.com/yosys.tar.gz"
         )
