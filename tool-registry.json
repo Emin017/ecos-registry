@@ -12,7 +12,7 @@
           "version": "0.1.0-alpha.0-ecos",
           "platforms": {
             "linux-x86_64": {
-              "url": "https://raw.githubusercontent.com/Luyoung0001/ecos-registry/main/assets/ecc-fe-0.1.0-alpha.0-ecos.tar.gz",
+              "url": "https://github.com/openecos-projects/ecos-resource-assets/releases/download/ecc-fe-v0.1.0-alpha.0-ecos/ecc-fe-0.1.0-alpha.0-ecos.tar.gz",
               "sha256": "0242eec70b324de5ccf3ea7497b8f6ca4ebd0fc9a104458831b656c2af68aede",
               "size": 24347354,
               "strip_prefix": "ecc-fe-0.1.0-alpha.0-ecos"
@@ -35,7 +35,7 @@
           "version": "0.1.0-alpha.0-ecos",
           "platforms": {
             "all-platform": {
-              "url": "https://raw.githubusercontent.com/Luyoung0001/ecos-registry/main/assets/ecc-fe-soc-ysyx-am-0.1.0-alpha.0-ecos.tar.gz",
+              "url": "https://github.com/openecos-projects/ecos-resource-assets/releases/download/ecc-fe-soc-ysyx-am-v0.1.0-alpha.0-ecos/ecc-fe-soc-ysyx-am-0.1.0-alpha.0-ecos.tar.gz",
               "sha256": "2a6f5e5df33aff55d218cc1f4b1c28d191620ab0805abd98f38b66849711f70e",
               "size": 21133977,
               "strip_prefix": "ecc-fe-soc-ysyx-am-0.1.0-alpha.0-ecos"
@@ -118,7 +118,7 @@
           "version": "0.7.0-ecos",
           "platforms": {
             "all-platform": {
-              "url": "https://github.com/openecos-projects/ecos-surfer-assets/releases/download/v0.7.0-ecos/surfer-web-assets-0.7.0-ecos.zip",
+              "url": "https://github.com/openecos-projects/ecos-resource-assets/releases/download/v0.7.0-ecos/surfer-web-assets-0.7.0-ecos.zip",
               "sha256": "3a8cce2c9ef57fcdbecca2371c533e811eef5a31c0f76af10d05d7cc6220b095",
               "size": 4654743,
               "strip_prefix": "surfer-web-assets-0.7.0-ecos"
