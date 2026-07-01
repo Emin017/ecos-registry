@@ -18,9 +18,31 @@
             }
           },
           "requires": [
+            "tool:ecc-fe-cpu-rtl",
             "tool:ecc-fe-soc-ysyx-am",
+            "tool:ecc-fe-difftest-ref",
             "tool:ecc-fe-examples"
           ]
+        }
+      ]
+    },
+    {
+      "name": "ecc-fe-cpu-rtl",
+      "display_name": "ECC-FE CPU RTL Resources",
+      "description": "Installable ECC-FE third-party CPU RTL snapshots and RT-Thread AM support files used by frontend simulation adapters.",
+      "category": "frontend",
+      "homepage": "https://github.com/openecos-projects/ecc-fe",
+      "versions": [
+        {
+          "version": "latest",
+          "platforms": {
+            "linux-x86_64": {
+              "url": "https://github.com/openecos-projects/ecos-resource-assets/releases/download/ecc-fe-cpu-rtl-latest/ecc-fe-cpu-rtl-latest.tar.gz",
+              "sha256_url": "https://github.com/openecos-projects/ecos-resource-assets/releases/download/ecc-fe-cpu-rtl-latest/ecc-fe-cpu-rtl-latest.tar.gz.sha256",
+              "strip_prefix": "ecc-fe-cpu-rtl-latest"
+            }
+          },
+          "requires": []
         }
       ]
     },
@@ -38,6 +60,29 @@
               "url": "https://github.com/openecos-projects/ecos-resource-assets/releases/download/ecc-fe-soc-ysyx-am-latest/ecc-fe-soc-ysyx-am-latest.tar.gz",
               "sha256_url": "https://github.com/openecos-projects/ecos-resource-assets/releases/download/ecc-fe-soc-ysyx-am-latest/ecc-fe-soc-ysyx-am-latest.tar.gz.sha256",
               "strip_prefix": "ecc-fe-soc-ysyx-am-latest"
+            }
+          },
+          "requires": [
+            "tool:ecc-fe-cpu-rtl",
+            "tool:ecc-fe-difftest-ref"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "ecc-fe-difftest-ref",
+      "display_name": "ECC-FE Difftest Reference Model",
+      "description": "Installable ECC-FE Spike-based difftest reference shared object used by SoC simulation flows.",
+      "category": "frontend",
+      "homepage": "https://github.com/openecos-projects/ecc-fe",
+      "versions": [
+        {
+          "version": "latest",
+          "platforms": {
+            "linux-x86_64": {
+              "url": "https://github.com/openecos-projects/ecos-resource-assets/releases/download/ecc-fe-difftest-ref-latest/ecc-fe-difftest-ref-latest.tar.gz",
+              "sha256_url": "https://github.com/openecos-projects/ecos-resource-assets/releases/download/ecc-fe-difftest-ref-latest/ecc-fe-difftest-ref-latest.tar.gz.sha256",
+              "strip_prefix": "ecc-fe-difftest-ref-latest"
             }
           },
           "requires": []
