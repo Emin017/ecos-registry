@@ -2,6 +2,48 @@
   "schema_version": 2,
   "tools": [
     {
+      "name": "ecc-fe",
+      "display_name": "ECC-FE Frontend Flow",
+      "description": "ECOS frontend flow runtime CLI used by ECOS Studio to create workspaces and run Review, Elab, Lint, Sim, and Wave metadata steps.",
+      "category": "frontend",
+      "homepage": "https://github.com/openecos-projects/ecc-fe",
+      "versions": [
+        {
+          "version": "latest",
+          "platforms": {
+            "linux-x86_64": {
+              "url": "https://github.com/openecos-projects/ecos-resource-assets/releases/download/ecc-fe-latest/ecc-fe-latest.tar.gz",
+              "sha256_url": "https://github.com/openecos-projects/ecos-resource-assets/releases/download/ecc-fe-latest/ecc-fe-latest.tar.gz.sha256",
+              "strip_prefix": "ecc-fe-latest"
+            }
+          },
+          "requires": [
+            "tool:ecc-fe-soc-ysyx-am"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "ecc-fe-soc-ysyx-am",
+      "display_name": "ECC-FE YSYX AM SoC Harness",
+      "description": "Installable SoC harness resource used by ECC-FE simulation flows for CPU tests, RT-Thread, and CoreMark.",
+      "category": "frontend",
+      "homepage": "https://github.com/openecos-projects/ecc-fe",
+      "versions": [
+        {
+          "version": "latest",
+          "platforms": {
+            "linux-x86_64": {
+              "url": "https://github.com/openecos-projects/ecos-resource-assets/releases/download/ecc-fe-soc-ysyx-am-latest/ecc-fe-soc-ysyx-am-latest.tar.gz",
+              "sha256_url": "https://github.com/openecos-projects/ecos-resource-assets/releases/download/ecc-fe-soc-ysyx-am-latest/ecc-fe-soc-ysyx-am-latest.tar.gz.sha256",
+              "strip_prefix": "ecc-fe-soc-ysyx-am-latest"
+            }
+          },
+          "requires": []
+        }
+      ]
+    },
+    {
       "name": "yosys",
       "display_name": "Yosys",
       "description": "Yosys from the OSS CAD Suite distribution.",
@@ -16,6 +58,67 @@
               "sha256": "97e86fb5acce4071075854b82d9c05b78349d8afa4993fd559092986de485ea2",
               "size": 711743679,
               "strip_prefix": "oss-cad-suite"
+            }
+          },
+          "requires": []
+        }
+      ]
+    },
+    {
+      "name": "slang",
+      "display_name": "Slang",
+      "description": "SystemVerilog compiler and elaboration frontend used by ECC-FE ELAB and lint diagnostics.",
+      "category": "frontend",
+      "homepage": "https://github.com/MikePopoloski/slang",
+      "versions": [
+        {
+          "version": "11.0",
+          "platforms": {
+            "linux-x86_64": {
+              "url": "https://github.com/MikePopoloski/slang/releases/download/v11.0/slang-linux-x86_64.tar.gz",
+              "sha256": "951a170e10e25e54c91565030acfdfc11c3226714ebf225a18ad4166a898d8a4",
+              "size": 3514870
+            }
+          },
+          "requires": []
+        }
+      ]
+    },
+    {
+      "name": "riscv-toolchain",
+      "display_name": "RISC-V GNU Toolchain",
+      "description": "RISC-V GNU bare-metal GCC toolchain used to build CPU tests, RT-Thread images, and CoreMark programs.",
+      "category": "toolchain",
+      "homepage": "https://github.com/riscv-collab/riscv-gnu-toolchain",
+      "versions": [
+        {
+          "version": "2026.06.06",
+          "platforms": {
+            "linux-x86_64": {
+              "url": "https://github.com/riscv-collab/riscv-gnu-toolchain/releases/download/2026.06.06/riscv64-elf-ubuntu-22.04-gcc.tar.xz",
+              "sha256": "231ba19378a27f19724805cf5e8b5917064ea9b89f87d7829009fd514369e2ef",
+              "size": 540298396,
+              "strip_prefix": "riscv"
+            }
+          },
+          "requires": []
+        }
+      ]
+    },
+    {
+      "name": "surfer",
+      "display_name": "Surfer Web Assets",
+      "description": "Offline Surfer waveform viewer web assets used by ECOS Studio Wave.",
+      "category": "viewer",
+      "homepage": "https://github.com/Luyoung0001/surfer",
+      "versions": [
+        {
+          "version": "latest",
+          "platforms": {
+            "linux-x86_64": {
+              "url": "https://github.com/openecos-projects/ecos-resource-assets/releases/download/surfer-latest/surfer-latest.zip",
+              "sha256_url": "https://github.com/openecos-projects/ecos-resource-assets/releases/download/surfer-latest/surfer-latest.zip.sha256",
+              "strip_prefix": "surfer-latest"
             }
           },
           "requires": []
