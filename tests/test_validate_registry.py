@@ -239,8 +239,8 @@ class ValidateRegistryOfflineTests(unittest.TestCase):
         self.assert_has_error(errors, "tools[0].versions[0].platforms.linux-x86_64.unknown: unknown platform field")
         self.assert_has_error(errors, "pdks[0].versions[0].platforms.all-platform.url: unsupported archive suffix")
 
-    def test_latest_assets_can_use_remote_checksum_metadata(self) -> None:
-        """Allow rolling latest assets to get checksum and size from sidecar URLs."""
+    def test_sidecar_metadata_does_not_replace_static_locks(self) -> None:
+        """Require the static fields consumed by current installers."""
         registry = valid_registry()
         tool_platform = registry["tools"][0]["versions"][0]["platforms"]["linux-x86_64"]
         assert isinstance(tool_platform, dict)
@@ -249,10 +249,17 @@ class ValidateRegistryOfflineTests(unittest.TestCase):
 
         errors = self.errors_for(registry)
 
-        self.assertEqual([], errors)
+        self.assert_has_error(
+            errors,
+            "tools[0].versions[0].platforms.linux-x86_64.sha256: missing required field",
+        )
+        self.assert_has_error(
+            errors,
+            "tools[0].versions[0].platforms.linux-x86_64.size: missing required field",
+        )
 
     def test_asset_must_have_checksum_and_size_source(self) -> None:
-        """Require either static archive facts or metadata sidecars for install safety."""
+        """Require static archive facts for install safety."""
         registry = valid_registry()
         tool_platform = registry["tools"][0]["versions"][0]["platforms"]["linux-x86_64"]
         assert isinstance(tool_platform, dict)
@@ -265,11 +272,11 @@ class ValidateRegistryOfflineTests(unittest.TestCase):
 
         self.assert_has_error(
             errors,
-            "tools[0].versions[0].platforms.linux-x86_64: missing sha256, sha256_url, or metadata_url",
+            "tools[0].versions[0].platforms.linux-x86_64.sha256: missing required field",
         )
         self.assert_has_error(
             errors,
-            "tools[0].versions[0].platforms.linux-x86_64: missing size, sha256_url, or metadata_url",
+            "tools[0].versions[0].platforms.linux-x86_64.size: missing required field",
         )
 
     def test_tar_xz_archives_are_supported(self) -> None:

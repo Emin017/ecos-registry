@@ -40,7 +40,7 @@ PDK_REQUIRED_FIELDS = (
     "versions",
 )
 VERSION_REQUIRED_FIELDS = ("version", "platforms")
-PLATFORM_REQUIRED_FIELDS = ("url",)
+PLATFORM_REQUIRED_FIELDS = ("url", "sha256", "size")
 ALLOWED_PLATFORM_FIELDS = frozenset(
     PLATFORM_REQUIRED_FIELDS + ("sha256", "size", "metadata_url", "sha256_url", "strip_prefix", "post_install")
 )
@@ -372,10 +372,6 @@ def _validate_platforms(
             _validate_sha256(platform.get("sha256"), f"{platform_path}.sha256", errors)
         if "size" in platform:
             _validate_size(platform.get("size"), f"{platform_path}.size", errors)
-        if "sha256" not in platform and "sha256_url" not in platform and "metadata_url" not in platform:
-            errors.append(f"{platform_path}: missing sha256, sha256_url, or metadata_url")
-        if "size" not in platform and "sha256_url" not in platform and "metadata_url" not in platform:
-            errors.append(f"{platform_path}: missing size, sha256_url, or metadata_url")
         if "strip_prefix" in platform and not _is_non_empty_string(
             platform["strip_prefix"]
         ):
