@@ -14,7 +14,6 @@
             "linux-x86_64": {
               "url": "https://github.com/openecos-projects/ecos-resource-assets/releases/download/ecc-fe-latest/ecc-fe-latest.tar.gz",
               "metadata_url": "https://github.com/openecos-projects/ecos-resource-assets/releases/download/ecc-fe-latest/ecc-fe-latest.metadata.json",
-              "sha256_url": "https://github.com/openecos-projects/ecos-resource-assets/releases/download/ecc-fe-latest/ecc-fe-latest.tar.gz.sha256",
               "strip_prefix": "ecc-fe-latest",
               "sha256": "0bc9103aaec0c1e3cc9f5c2d37475d7ef5f2b2f1d6bbce0dd087793f25f540c3",
               "size": 154849
@@ -42,7 +41,6 @@
             "linux-x86_64": {
               "url": "https://github.com/openecos-projects/ecos-resource-assets/releases/download/ecc-fe-cpu-rtl-latest/ecc-fe-cpu-rtl-latest.tar.gz",
               "metadata_url": "https://github.com/openecos-projects/ecos-resource-assets/releases/download/ecc-fe-cpu-rtl-latest/ecc-fe-cpu-rtl-latest.metadata.json",
-              "sha256_url": "https://github.com/openecos-projects/ecos-resource-assets/releases/download/ecc-fe-cpu-rtl-latest/ecc-fe-cpu-rtl-latest.tar.gz.sha256",
               "strip_prefix": "ecc-fe-cpu-rtl-latest",
               "sha256": "8815296201579643204d3e0c787572e879564683d1be77d14c6962ccc15cbb40",
               "size": 190681585
@@ -65,7 +63,6 @@
             "linux-x86_64": {
               "url": "https://github.com/openecos-projects/ecos-resource-assets/releases/download/ecc-fe-soc-ysyx-am-latest/ecc-fe-soc-ysyx-am-latest.tar.gz",
               "metadata_url": "https://github.com/openecos-projects/ecos-resource-assets/releases/download/ecc-fe-soc-ysyx-am-latest/ecc-fe-soc-ysyx-am-latest.metadata.json",
-              "sha256_url": "https://github.com/openecos-projects/ecos-resource-assets/releases/download/ecc-fe-soc-ysyx-am-latest/ecc-fe-soc-ysyx-am-latest.tar.gz.sha256",
               "strip_prefix": "ecc-fe-soc-ysyx-am-latest",
               "sha256": "7b1181d7edb6a1e9f98e4eee2aa73a48581822380a4878bd7a4ade21fbadba8f",
               "size": 471831
@@ -91,7 +88,6 @@
             "linux-x86_64": {
               "url": "https://github.com/openecos-projects/ecos-resource-assets/releases/download/ecc-fe-difftest-ref-latest/ecc-fe-difftest-ref-latest.tar.gz",
               "metadata_url": "https://github.com/openecos-projects/ecos-resource-assets/releases/download/ecc-fe-difftest-ref-latest/ecc-fe-difftest-ref-latest.metadata.json",
-              "sha256_url": "https://github.com/openecos-projects/ecos-resource-assets/releases/download/ecc-fe-difftest-ref-latest/ecc-fe-difftest-ref-latest.tar.gz.sha256",
               "strip_prefix": "ecc-fe-difftest-ref-latest",
               "sha256": "33bf8f514331d8fc3ba9cf28d240f0f54bef243ad7671d7dc9405a620840249c",
               "size": 20659646
@@ -114,7 +110,6 @@
             "linux-x86_64": {
               "url": "https://github.com/openecos-projects/ecos-resource-assets/releases/download/ecc-fe-examples-latest/ecc-fe-examples-latest.tar.gz",
               "metadata_url": "https://github.com/openecos-projects/ecos-resource-assets/releases/download/ecc-fe-examples-latest/ecc-fe-examples-latest.metadata.json",
-              "sha256_url": "https://github.com/openecos-projects/ecos-resource-assets/releases/download/ecc-fe-examples-latest/ecc-fe-examples-latest.tar.gz.sha256",
               "strip_prefix": "ecc-fe-examples-latest",
               "sha256": "e98c76a3569d6a5ca64533bfd125153072f401b8ffeffa398049c1fa27c8c332",
               "size": 215546
@@ -199,7 +194,6 @@
             "linux-x86_64": {
               "url": "https://github.com/openecos-projects/ecos-resource-assets/releases/download/surfer-latest/surfer-latest.tar.gz",
               "metadata_url": "https://github.com/openecos-projects/ecos-resource-assets/releases/download/surfer-latest/surfer-latest.metadata.json",
-              "sha256_url": "https://github.com/openecos-projects/ecos-resource-assets/releases/download/surfer-latest/surfer-latest.tar.gz.sha256",
               "strip_prefix": "surfer-latest",
               "sha256": "1f07b73cafbc858531ac20f2be5d0ecc464bd0c3f3d6409b8bc6ec6ef86b8fa5",
               "size": 2769731
