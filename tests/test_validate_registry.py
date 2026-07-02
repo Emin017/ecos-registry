@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import copy
+from email.message import Message
 from http.client import HTTPMessage
 import importlib.util
 from pathlib import Path
@@ -37,6 +38,8 @@ def valid_registry() -> dict[str, object]:
                         "platforms": {
                             "linux-x86_64": {
                                 "url": "https://example.com/yosys.tar.gz",
+                                "metadata_url": "https://example.com/yosys.metadata.json",
+                                "sha256_url": "https://example.com/yosys.tar.gz.sha256",
                                 "sha256": "a" * 64,
                                 "size": 123,
                                 "strip_prefix": "oss-cad-suite",
@@ -209,6 +212,8 @@ class ValidateRegistryOfflineTests(unittest.TestCase):
             "": copy.deepcopy(tool_version["platforms"]["linux-x86_64"]),
             "linux-x86_64": {
                 "url": "ftp://example.com/yosys.bin",
+                "metadata_url": "https://example.com/yosys.metadata.bin",
+                "sha256_url": "https://exa mple.com/yosys.sha256",
                 "sha256": "A" * 64,
                 "size": 0,
                 "strip_prefix": "",
@@ -226,11 +231,64 @@ class ValidateRegistryOfflineTests(unittest.TestCase):
         self.assert_has_error(errors, "tools[0].versions[0].platforms: platform key must be non-empty")
         self.assert_has_error(errors, "tools[0].versions[0].platforms.linux-x86_64.url: must use http or https")
         self.assert_has_error(errors, "tools[0].versions[0].platforms.linux-x86_64.url: unsupported archive suffix")
+        self.assert_has_error(errors, "tools[0].versions[0].platforms.linux-x86_64.metadata_url: unsupported sidecar URL suffix")
+        self.assert_has_error(errors, "tools[0].versions[0].platforms.linux-x86_64.sha256_url: malformed URL")
         self.assert_has_error(errors, "tools[0].versions[0].platforms.linux-x86_64.sha256: must be a lowercase 64-character hex string")
         self.assert_has_error(errors, "tools[0].versions[0].platforms.linux-x86_64.size: must be a positive integer")
         self.assert_has_error(errors, "tools[0].versions[0].platforms.linux-x86_64.strip_prefix: must be a non-empty string")
         self.assert_has_error(errors, "tools[0].versions[0].platforms.linux-x86_64.unknown: unknown platform field")
         self.assert_has_error(errors, "pdks[0].versions[0].platforms.all-platform.url: unsupported archive suffix")
+
+    def test_sidecar_metadata_does_not_replace_static_locks(self) -> None:
+        """Require the static fields consumed by current installers."""
+        registry = valid_registry()
+        tool_platform = registry["tools"][0]["versions"][0]["platforms"]["linux-x86_64"]
+        assert isinstance(tool_platform, dict)
+        del tool_platform["sha256"]
+        del tool_platform["size"]
+
+        errors = self.errors_for(registry)
+
+        self.assert_has_error(
+            errors,
+            "tools[0].versions[0].platforms.linux-x86_64.sha256: missing required field",
+        )
+        self.assert_has_error(
+            errors,
+            "tools[0].versions[0].platforms.linux-x86_64.size: missing required field",
+        )
+
+    def test_asset_must_have_checksum_and_size_source(self) -> None:
+        """Require static archive facts for install safety."""
+        registry = valid_registry()
+        tool_platform = registry["tools"][0]["versions"][0]["platforms"]["linux-x86_64"]
+        assert isinstance(tool_platform, dict)
+        del tool_platform["sha256"]
+        del tool_platform["sha256_url"]
+        del tool_platform["metadata_url"]
+        del tool_platform["size"]
+
+        errors = self.errors_for(registry)
+
+        self.assert_has_error(
+            errors,
+            "tools[0].versions[0].platforms.linux-x86_64.sha256: missing required field",
+        )
+        self.assert_has_error(
+            errors,
+            "tools[0].versions[0].platforms.linux-x86_64.size: missing required field",
+        )
+
+    def test_tar_xz_archives_are_supported(self) -> None:
+        """Allow upstream binary releases distributed as tar.xz archives."""
+        registry = valid_registry()
+        tool_platform = registry["tools"][0]["versions"][0]["platforms"]["linux-x86_64"]
+        assert isinstance(tool_platform, dict)
+        tool_platform["url"] = "https://example.com/riscv64-elf-ubuntu-22.04-gcc.tar.xz"
+
+        errors = self.errors_for(registry)
+
+        self.assertEqual([], errors)
 
     def test_malformed_url_errors_are_pathful_offline(self) -> None:
         """Confirm malformed asset URLs fail offline with the exact platform path."""
@@ -407,6 +465,28 @@ class ValidateRegistryUrlTests(unittest.TestCase):
         self.assertEqual(["HEAD", "GET"], [request.get_method() for request in requests])
         self.assertEqual("bytes=0-0", requests[1].headers["Range"])
         self.assertEqual([1], get_response.read_sizes)
+
+    def test_url_checker_accepts_redirect_with_location(self) -> None:
+        """Treat download redirects as reachable without probing large asset backends."""
+        headers = Message()
+        headers["Location"] = "https://downloads.example.com/yosys.tar.gz"
+
+        def opener(request: Request, timeout: float) -> FakeResponse:
+            del timeout
+            raise HTTPError(
+                request.full_url,
+                302,
+                "Found",
+                headers,
+                None,
+            )
+
+        error = validate_registry.check_url_reachable(
+            "https://example.com/yosys.tar.gz",
+            opener=opener,
+        )
+
+        self.assertIsNone(error)
 
     def test_url_checker_reports_timeout_and_non_success_status(self) -> None:
         """Report timeout and HTTP status failures from lightweight URL probes."""

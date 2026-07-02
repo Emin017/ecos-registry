@@ -19,7 +19,7 @@ from typing import Protocol
 from typing import TypeGuard
 from urllib.error import HTTPError, URLError
 from urllib.parse import urlparse
-from urllib.request import Request, urlopen
+from urllib.request import HTTPRedirectHandler, Request, build_opener
 
 
 ALLOWED_TOP_LEVEL_KEYS = frozenset(("schema_version", "tools", "pdks"))
@@ -42,14 +42,23 @@ PDK_REQUIRED_FIELDS = (
 VERSION_REQUIRED_FIELDS = ("version", "platforms")
 PLATFORM_REQUIRED_FIELDS = ("url", "sha256", "size")
 ALLOWED_PLATFORM_FIELDS = frozenset(
-    PLATFORM_REQUIRED_FIELDS + ("strip_prefix", "post_install")
+    PLATFORM_REQUIRED_FIELDS + ("sha256", "size", "metadata_url", "sha256_url", "strip_prefix", "post_install")
 )
-ARCHIVE_SUFFIXES = (".tar", ".tar.gz", ".tgz", ".zip")
+ARCHIVE_SUFFIXES = (".tar", ".tar.gz", ".tar.xz", ".tgz", ".txz", ".zip")
+SIDECAR_URL_SUFFIXES = (".json", ".sha256", ".txt")
 IDENTIFIER_RE = re.compile(r"^[a-z0-9_-]+$")
 SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
 DATE_VERSION_RE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 NUMERIC_VERSION_RE = re.compile(r"^\d+(?:\.\d+)+$")
 URL_TIMEOUT_SECONDS = 5.0
+
+
+class NoRedirectHandler(HTTPRedirectHandler):
+    def redirect_request(self, *args: object, **kwargs: object) -> None:
+        return None
+
+
+NO_REDIRECT_OPENER = build_opener(NoRedirectHandler)
 
 
 class UrlResponse(Protocol):
@@ -354,8 +363,15 @@ def _validate_platforms(
         url_path = f"{platform_path}.url"
         if _validate_platform_url(platform.get("url"), url_path, errors):
             asset_urls.append(AssetUrl(path=url_path, url=platform["url"]))
-        _validate_sha256(platform.get("sha256"), f"{platform_path}.sha256", errors)
-        _validate_size(platform.get("size"), f"{platform_path}.size", errors)
+        for field in ("metadata_url", "sha256_url"):
+            if field in platform:
+                sidecar_path = f"{platform_path}.{field}"
+                if _validate_sidecar_url(platform.get(field), sidecar_path, errors):
+                    asset_urls.append(AssetUrl(path=sidecar_path, url=platform[field]))
+        if "sha256" in platform:
+            _validate_sha256(platform.get("sha256"), f"{platform_path}.sha256", errors)
+        if "size" in platform:
+            _validate_size(platform.get("size"), f"{platform_path}.size", errors)
         if "strip_prefix" in platform and not _is_non_empty_string(
             platform["strip_prefix"]
         ):
@@ -398,6 +414,40 @@ def _validate_platform_url(value: object, path: str, errors: list[str]) -> bool:
         valid = False
     if not parsed.path.lower().endswith(ARCHIVE_SUFFIXES):
         errors.append(f"{path}: unsupported archive suffix")
+        valid = False
+    return valid
+
+
+def _validate_sidecar_url(value: object, path: str, errors: list[str]) -> bool:
+    if not _is_non_empty_string(value):
+        errors.append(f"{path}: must be a non-empty string")
+        return False
+    if _contains_url_control_character(value):
+        errors.append(
+            f"{path}: malformed URL: must not contain whitespace or control characters"
+        )
+        return False
+
+    try:
+        parsed = urlparse(value)
+        _ = parsed.port
+        hostname = parsed.hostname
+    except ValueError as exc:
+        errors.append(f"{path}: malformed URL: {exc}")
+        return False
+
+    valid = True
+    if parsed.scheme not in ("http", "https"):
+        errors.append(f"{path}: must use http or https")
+        valid = False
+    if not parsed.netloc:
+        errors.append(f"{path}: must include a host")
+        valid = False
+    elif hostname is None:
+        errors.append(f"{path}: malformed URL: must include a valid host")
+        valid = False
+    if not parsed.path.lower().endswith(SIDECAR_URL_SUFFIXES):
+        errors.append(f"{path}: unsupported sidecar URL suffix")
         valid = False
     return valid
 
@@ -468,6 +518,10 @@ def _post_install_cwd_error(value: object) -> str | None:
     return None
 
 
+def urlopen(request: Request, *, timeout: float) -> UrlResponse:
+    return NO_REDIRECT_OPENER.open(request, timeout=timeout)
+
+
 def _open_url(request: Request, timeout: float) -> UrlResponse:
     return urlopen(request, timeout=timeout)
 
@@ -509,6 +563,8 @@ def _request_url(
                 response.read(read_limit)
             return None
     except HTTPError as exc:
+        if 300 <= exc.code < 400 and exc.headers.get("Location"):
+            return None
         return f"{method} returned HTTP {exc.code}"
     except (TimeoutError, socket.timeout) as exc:
         return f"{method} timed out: {exc}"
