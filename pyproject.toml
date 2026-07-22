@@ -1,0 +1,38 @@
+# This repository is not a Python package; pyproject.toml only centralizes
+# tooling configuration for the CI scripts and their tests.
+
+[dependency-groups]
+dev = [
+    "pyright",
+    "ruff",
+    "ty",
+]
+
+[tool.ruff]
+target-version = "py313"
+include = [".github/scripts/**/*.py", "tests/**/*.py"]
+
+[tool.ruff.lint]
+select = [
+    "ANN", # flake8-annotations
+    "B",   # flake8-bugbear
+    "E",   # pycodestyle
+    "F",   # Pyflakes
+    "FBT", # flake8-boolean-trap
+    "I",   # isort
+    "SIM", # flake8-simplify
+    "TC",  # flake8-type-checking
+    "UP",  # pyupgrade
+]
+ignore = [
+    # dict[str, Any] is the honest type at the decoded-JSON boundary.
+    "ANN401",
+]
+
+[tool.pyright]
+include = [".github/scripts", "tests"]
+pythonVersion = "3.13"
+typeCheckingMode = "standard"
+
+[tool.ty.environment]
+python-version = "3.13"

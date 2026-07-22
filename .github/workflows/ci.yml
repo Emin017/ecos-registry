@@ -16,11 +16,29 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Ruff lint
+        run: uv run --locked ruff check
+
+      - name: ty type check
+        run: uv run --locked ty check
+
+      - name: pyright type check
+        run: uv run --locked pyright
+
       - name: Test validator
-        run: python3 -m unittest discover -s tests
+        run: uv run --locked python -m unittest discover -s tests
 
       - name: Validate live registry
-        run: python3 .github/scripts/validate_registry.py tool-registry.json --check-urls
+        run: >-
+          uv run --locked python .github/scripts/validate_registry.py
+          tool-registry.json --check-urls
 
       - name: Validate example registry
-        run: python3 .github/scripts/validate_registry.py examples/tool-registry.example.json
+        run: >-
+          uv run --locked python .github/scripts/validate_registry.py
+          examples/tool-registry.example.json
