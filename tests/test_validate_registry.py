@@ -1,27 +1,38 @@
 from __future__ import annotations
 
 import copy
-from http.client import HTTPMessage
 import importlib.util
-from pathlib import Path
 import sys
-from urllib.error import HTTPError
-from urllib.request import Request
+import tempfile
 import unittest
+from http.client import HTTPMessage
+from pathlib import Path
+from typing import TYPE_CHECKING, Any
+from urllib.error import HTTPError
 
+if TYPE_CHECKING:
+    from urllib.request import Request
 
 ROOT = Path(__file__).resolve().parents[1]
 VALIDATOR_PATH = ROOT / ".github" / "scripts" / "validate_registry.py"
 
 spec = importlib.util.spec_from_file_location("validate_registry", VALIDATOR_PATH)
 assert spec is not None
-validate_registry = importlib.util.module_from_spec(spec)
+validate_registry: Any = importlib.util.module_from_spec(spec)
 assert spec.loader is not None
 sys.modules[spec.name] = validate_registry
 spec.loader.exec_module(validate_registry)
 
+Issue = validate_registry.Issue
+Rule = validate_registry.Rule
 
-def valid_registry() -> dict[str, object]:
+# An expectation is a list of (path, rule) pairs, in emission order. Each test
+# reads as a spec clause: at this JSON path, this rule — and only these rules —
+# must fire. Message wording is deliberately not asserted.
+Expectation = tuple[str, Rule]
+
+
+def valid_registry() -> dict[str, Any]:
     return {
         "schema_version": 2,
         "tools": [
@@ -78,33 +89,60 @@ def valid_registry() -> dict[str, object]:
     }
 
 
-class ValidateRegistryOfflineTests(unittest.TestCase):
-    def errors_for(self, registry: object) -> list[str]:
-        return validate_registry.validate_registry_data(registry)
+def issues_in(registry: object, **kwargs: Any) -> list[Issue]:
+    return validate_registry.validate_registry_data(registry, **kwargs)
 
-    def assert_has_error(self, errors: list[str], expected: str) -> None:
-        self.assertTrue(
-            any(expected in error for error in errors),
-            f"Expected {expected!r} in errors:\n" + "\n".join(errors),
-        )
+
+def paths_and_rules(registry: object, **kwargs: Any) -> list[Expectation]:
+    return [(issue.path, issue.rule) for issue in issues_in(registry, **kwargs)]
+
+
+class ValidateRegistryOfflineTests(unittest.TestCase):
+    def assert_spec(
+        self,
+        registry: object,
+        expected: list[Expectation],
+        **kwargs: Any,
+    ) -> None:
+        self.assertEqual(expected, paths_and_rules(registry, **kwargs))
 
     def test_current_registry_passes_offline_validation(self) -> None:
         """Validate that the checked-in registry satisfies offline format rules."""
-        errors = validate_registry.validate_registry(ROOT / "tool-registry.json")
+        issues = validate_registry.validate_registry(ROOT / "tool-registry.json")
+        self.assertEqual([], issues)
 
-        self.assertEqual([], errors)
+    def test_issue_str_renders_pathful_message(self) -> None:
+        """Keep the CLI line format stable: '<path>: <message>'."""
+        issue = Issue(
+            "tools[0].name", Rule.IDENTIFIER_FORMAT, "must match ^[a-z0-9_-]+$"
+        )
+
+        self.assertEqual("tools[0].name: must match ^[a-z0-9_-]+$", str(issue))
+
+    def test_unparseable_registry_file_reports_invalid_json(self) -> None:
+        """Report a JSON syntax error as a single root-level invalid-json issue."""
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "broken.json"
+            path.write_text("{not json", encoding="utf-8")
+            issues = validate_registry.validate_registry(path)
+
+        self.assertEqual([("$", Rule.INVALID_JSON)], [(i.path, i.rule) for i in issues])
 
     def test_invalid_json_shape_reports_pathful_errors(self) -> None:
-        """Verify top-level JSON shape errors include actionable registry paths."""
-        self.assert_has_error(self.errors_for([]), "$: must be a JSON object")
+        """Verify top-level JSON shape errors point at the offending keys."""
+        self.assert_spec([], [("$", Rule.EXPECTED_OBJECT)])
 
         registry = {"schema_version": 1, "tools": {}, "pdks": {}, "extra": True}
-        errors = self.errors_for(registry)
 
-        self.assert_has_error(errors, "schema_version: must equal 2")
-        self.assert_has_error(errors, "tools: must be an array")
-        self.assert_has_error(errors, "pdks: must be an array")
-        self.assert_has_error(errors, "extra: unknown top-level key")
+        self.assert_spec(
+            registry,
+            [
+                ("schema_version", Rule.SCHEMA_VERSION),
+                ("extra", Rule.UNKNOWN_TOP_LEVEL_KEY),
+                ("tools", Rule.EXPECTED_ARRAY),
+                ("pdks", Rule.EXPECTED_ARRAY),
+            ],
+        )
 
     def test_required_fields_and_identifier_rules_are_enforced(self) -> None:
         """Check required entry fields and stable identifier naming constraints."""
@@ -118,12 +156,15 @@ class ValidateRegistryOfflineTests(unittest.TestCase):
         pdk["id"] = ""
         del pdk["description"]
 
-        errors = self.errors_for(registry)
-
-        self.assert_has_error(errors, "tools[0].display_name: missing required field")
-        self.assert_has_error(errors, "tools[0].name: must match")
-        self.assert_has_error(errors, "pdks[0].description: missing required field")
-        self.assert_has_error(errors, "pdks[0].id: must be a non-empty stable identifier")
+        self.assert_spec(
+            registry,
+            [
+                ("tools[0].display_name", Rule.REQUIRED),
+                ("tools[0].name", Rule.IDENTIFIER_FORMAT),
+                ("pdks[0].description", Rule.REQUIRED),
+                ("pdks[0].id", Rule.IDENTIFIER_EMPTY),
+            ],
+        )
 
     def test_duplicate_entry_ids_and_empty_versions_or_platforms_fail(self) -> None:
         """Reject duplicate tool/PDK ids and empty version or platform sections."""
@@ -145,18 +186,18 @@ class ValidateRegistryOfflineTests(unittest.TestCase):
         assert isinstance(platforms, dict)
         platforms.clear()
 
-        errors = self.errors_for(registry)
-
-        self.assert_has_error(errors, "tools[1].name: duplicate tool name 'yosys'")
-        self.assert_has_error(errors, "pdks[1].id: duplicate PDK id 'ics55'")
-        self.assert_has_error(errors, "tools[0].versions: must be a non-empty array")
-        self.assert_has_error(
-            errors,
-            "pdks[0].versions[0].platforms: must be a non-empty object",
+        self.assert_spec(
+            registry,
+            [
+                ("tools[0].versions", Rule.NON_EMPTY_ARRAY),
+                ("tools[1].name", Rule.DUPLICATE_ID),
+                ("pdks[0].versions[0].platforms", Rule.NON_EMPTY_OBJECT),
+                ("pdks[1].id", Rule.DUPLICATE_ID),
+            ],
         )
 
     def test_version_entries_and_ordering_are_validated(self) -> None:
-        """Ensure version metadata, requires type, and newest-first order are checked."""
+        """Ensure requires type and newest-first version order are checked."""
         registry = valid_registry()
         tool = registry["tools"][0]
         pdk = registry["pdks"][0]
@@ -188,13 +229,13 @@ class ValidateRegistryOfflineTests(unittest.TestCase):
             },
         ]
 
-        errors = self.errors_for(registry)
-
-        self.assert_has_error(errors, "tools[0].versions: newest version must appear first")
-        self.assert_has_error(errors, "tools[0].versions[0].requires: must be an array")
-        self.assert_has_error(
-            errors,
-            "pdks[0].versions: mixed or unsupported version format",
+        self.assert_spec(
+            registry,
+            [
+                ("tools[0].versions[0].requires", Rule.EXPECTED_ARRAY),
+                ("tools[0].versions", Rule.VERSION_ORDER),
+                ("pdks[0].versions", Rule.MIXED_VERSION_FORMAT),
+            ],
         )
 
     def test_platform_keys_and_fields_are_validated(self) -> None:
@@ -217,20 +258,47 @@ class ValidateRegistryOfflineTests(unittest.TestCase):
         }
         pdk_version["platforms"]["all-platform"]["url"] = "https://example.com/pdk.dmg"
 
-        errors = self.errors_for(registry)
-
-        self.assert_has_error(
-            errors,
-            "tools[0].versions[0].platforms.all-platform: all-platform is not allowed for tools",
+        self.assert_spec(
+            registry,
+            [
+                (
+                    "tools[0].versions[0].platforms.all-platform",
+                    Rule.ALL_PLATFORM_FOR_TOOL,
+                ),
+                (
+                    "tools[0].versions[0].platforms",
+                    Rule.EMPTY_PLATFORM_KEY,
+                ),
+                (
+                    "tools[0].versions[0].platforms.linux-x86_64.unknown",
+                    Rule.UNKNOWN_PLATFORM_FIELD,
+                ),
+                (
+                    "tools[0].versions[0].platforms.linux-x86_64.url",
+                    Rule.URL_SCHEME,
+                ),
+                (
+                    "tools[0].versions[0].platforms.linux-x86_64.url",
+                    Rule.ARCHIVE_SUFFIX,
+                ),
+                (
+                    "tools[0].versions[0].platforms.linux-x86_64.sha256",
+                    Rule.SHA256_FORMAT,
+                ),
+                (
+                    "tools[0].versions[0].platforms.linux-x86_64.size",
+                    Rule.POSITIVE_INTEGER,
+                ),
+                (
+                    "tools[0].versions[0].platforms.linux-x86_64.strip_prefix",
+                    Rule.NON_EMPTY_STRING,
+                ),
+                (
+                    "pdks[0].versions[0].platforms.all-platform.url",
+                    Rule.ARCHIVE_SUFFIX,
+                ),
+            ],
         )
-        self.assert_has_error(errors, "tools[0].versions[0].platforms: platform key must be non-empty")
-        self.assert_has_error(errors, "tools[0].versions[0].platforms.linux-x86_64.url: must use http or https")
-        self.assert_has_error(errors, "tools[0].versions[0].platforms.linux-x86_64.url: unsupported archive suffix")
-        self.assert_has_error(errors, "tools[0].versions[0].platforms.linux-x86_64.sha256: must be a lowercase 64-character hex string")
-        self.assert_has_error(errors, "tools[0].versions[0].platforms.linux-x86_64.size: must be a positive integer")
-        self.assert_has_error(errors, "tools[0].versions[0].platforms.linux-x86_64.strip_prefix: must be a non-empty string")
-        self.assert_has_error(errors, "tools[0].versions[0].platforms.linux-x86_64.unknown: unknown platform field")
-        self.assert_has_error(errors, "pdks[0].versions[0].platforms.all-platform.url: unsupported archive suffix")
 
     def test_malformed_url_errors_are_pathful_offline(self) -> None:
         """Confirm malformed asset URLs fail offline with the exact platform path."""
@@ -247,11 +315,14 @@ class ValidateRegistryOfflineTests(unittest.TestCase):
                 assert isinstance(platform, dict)
                 platform["url"] = url
 
-                errors = self.errors_for(registry)
-
-                self.assert_has_error(
-                    errors,
-                    "tools[0].versions[0].platforms.linux-x86_64.url: malformed URL",
+                self.assert_spec(
+                    registry,
+                    [
+                        (
+                            "tools[0].versions[0].platforms.linux-x86_64.url",
+                            Rule.MALFORMED_URL,
+                        )
+                    ],
                 )
 
     def test_post_install_commands_are_validated(self) -> None:
@@ -269,39 +340,19 @@ class ValidateRegistryOfflineTests(unittest.TestCase):
             {"command": ["make"], "cwd": "C:tmp"},
         ]
 
-        errors = self.errors_for(registry)
-
-        self.assert_has_error(
-            errors,
-            "pdks[0].versions[0].platforms.all-platform.post_install[0].command: missing required field",
-        )
-        self.assert_has_error(
-            errors,
-            "pdks[0].versions[0].platforms.all-platform.post_install[1].command: must be a non-empty string array",
-        )
-        self.assert_has_error(
-            errors,
-            "pdks[0].versions[0].platforms.all-platform.post_install[2].command[1]: must be a string",
-        )
-        self.assert_has_error(
-            errors,
-            "pdks[0].versions[0].platforms.all-platform.post_install[2].cwd: must be a non-empty relative path",
-        )
-        self.assert_has_error(
-            errors,
-            "pdks[0].versions[0].platforms.all-platform.post_install[3].cwd: must stay inside the extracted resource",
-        )
-        self.assert_has_error(
-            errors,
-            "pdks[0].versions[0].platforms.all-platform.post_install[4].cwd: must be a non-empty relative path",
-        )
-        self.assert_has_error(
-            errors,
-            "pdks[0].versions[0].platforms.all-platform.post_install[5].cwd: must be a non-empty relative path",
-        )
-        self.assert_has_error(
-            errors,
-            "pdks[0].versions[0].platforms.all-platform.post_install[6].cwd: must be a non-empty relative path",
+        post_install = "pdks[0].versions[0].platforms.all-platform.post_install"
+        self.assert_spec(
+            registry,
+            [
+                (f"{post_install}[0].command", Rule.REQUIRED),
+                (f"{post_install}[1].command", Rule.COMMAND_ARRAY),
+                (f"{post_install}[2].command[1]", Rule.EXPECTED_STRING),
+                (f"{post_install}[2].cwd", Rule.CWD_RELATIVE),
+                (f"{post_install}[3].cwd", Rule.CWD_ESCAPE),
+                (f"{post_install}[4].cwd", Rule.CWD_RELATIVE),
+                (f"{post_install}[5].cwd", Rule.CWD_RELATIVE),
+                (f"{post_install}[6].cwd", Rule.CWD_RELATIVE),
+            ],
         )
 
 
@@ -310,7 +361,7 @@ class FakeResponse:
         self.status = status
         self.read_sizes: list[int | None] = []
 
-    def __enter__(self) -> "FakeResponse":
+    def __enter__(self) -> FakeResponse:
         return self
 
     def __exit__(self, *args: object) -> None:
@@ -327,17 +378,19 @@ class ValidateRegistryUrlTests(unittest.TestCase):
         registry = valid_registry()
 
         def checker(url: str) -> str | None:
-            return f"mock failure for {url}"
+            if "yosys" in url:
+                return f"mock failure for {url}"
+            return None
 
-        errors = validate_registry.validate_registry_data(
-            registry,
-            check_urls=True,
-            url_checker=checker,
+        issues = issues_in(registry, check_urls=True, url_checker=checker)
+
+        self.assertEqual(
+            [("tools[0].versions[0].platforms.linux-x86_64.url", Rule.URL_UNREACHABLE)],
+            [(issue.path, issue.rule) for issue in issues],
         )
-
-        self.assert_has_error(
-            errors,
-            "tools[0].versions[0].platforms.linux-x86_64.url: URL check failed for https://example.com/yosys.tar.gz: mock failure",
+        self.assertIn(
+            "mock failure for https://example.com/yosys.tar.gz",
+            issues[0].message,
         )
 
     def test_url_checker_accepts_successful_head(self) -> None:
@@ -404,7 +457,8 @@ class ValidateRegistryUrlTests(unittest.TestCase):
         )
 
         self.assertIsNone(error)
-        self.assertEqual(["HEAD", "GET"], [request.get_method() for request in requests])
+        methods = [request.get_method() for request in requests]
+        self.assertEqual(["HEAD", "GET"], methods)
         self.assertEqual("bytes=0-0", requests[1].headers["Range"])
         self.assertEqual([1], get_response.read_sizes)
 
@@ -442,12 +496,6 @@ class ValidateRegistryUrlTests(unittest.TestCase):
 
         self.assertIsNotNone(error)
         self.assertIn("failed", error)
-
-    def assert_has_error(self, errors: list[str], expected: str) -> None:
-        self.assertTrue(
-            any(expected in error for error in errors),
-            f"Expected {expected!r} in errors:\n" + "\n".join(errors),
-        )
 
 
 if __name__ == "__main__":
