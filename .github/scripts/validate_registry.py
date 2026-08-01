@@ -18,7 +18,6 @@ from registry_schema import (
     ALLOWED_PLATFORM_FIELDS,
     ALLOWED_SUPPLEMENTAL_ASSET_FIELDS,
     ALLOWED_TOP_LEVEL_KEYS,
-    ALLOWED_VERSION_FIELDS,
     ARCHIVE_SUFFIXES,
     COLLECTION_SCHEMAS,
     DATE_VERSION_RE,
@@ -168,6 +167,7 @@ def _validate_entries(
             versions,
             f"{entry_path}.versions",
             entry_type=schema.resource_type,
+            allowed_version_fields=schema.allowed_version_fields,
             errors=errors,
             asset_urls=asset_urls,
             resource_ids=resource_ids,
@@ -208,6 +208,7 @@ def _validate_versions(
     versions: list[Any],
     path: str,
     entry_type: str,
+    allowed_version_fields: frozenset[str],
     errors: list[str],
     asset_urls: list[AssetUrl],
     resource_ids: frozenset[str],
@@ -223,7 +224,7 @@ def _validate_versions(
 
         _require_fields(version, VERSION_REQUIRED_FIELDS, version_path, errors)
         for field in version:
-            if field not in ALLOWED_VERSION_FIELDS:
+            if field not in allowed_version_fields:
                 errors.append(f"{version_path}.{field}: unknown version field")
         version_value = version.get("version")
         if not _is_non_empty_string(version_value):
@@ -238,7 +239,7 @@ def _validate_versions(
             else:
                 seen_versions[version_value] = f"{version_path}.version"
 
-        if "requires" in version:
+        if "requires" in version and "requires" in allowed_version_fields:
             _validate_requires(
                 version["requires"],
                 f"{version_path}.requires",

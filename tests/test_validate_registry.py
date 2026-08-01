@@ -77,6 +77,28 @@ def valid_registry() -> dict[str, object]:
                 ],
             }
         ],
+        "mpcs": [
+            {
+                "id": "mpc-frame",
+                "display_name": "MPC Frame",
+                "description": "Multi-project chip frame template.",
+                "category": "mpc",
+                "homepage": "https://github.com/openecos-projects/mpc-frame",
+                "versions": [
+                    {
+                        "version": "0.1.0",
+                        "platforms": {
+                            "all-platform": {
+                                "url": "https://example.com/mpc-frame-0.1.0.tar.gz",
+                                "sha256": "c" * 64,
+                                "size": 789,
+                                "strip_prefix": "mpc-frame-0.1.0",
+                            }
+                        },
+                    }
+                ],
+            }
+        ],
     }
 
 
@@ -100,12 +122,19 @@ class ValidateRegistryOfflineTests(unittest.TestCase):
         """Verify top-level JSON shape errors include actionable registry paths."""
         self.assert_has_error(self.errors_for([]), "$: must be a JSON object")
 
-        registry = {"schema_version": 1, "tools": {}, "pdks": {}, "extra": True}
+        registry = {
+            "schema_version": 1,
+            "tools": {},
+            "pdks": {},
+            "mpcs": {},
+            "extra": True,
+        }
         errors = self.errors_for(registry)
 
         self.assert_has_error(errors, "schema_version: must equal 2")
         self.assert_has_error(errors, "tools: must be an array")
         self.assert_has_error(errors, "pdks: must be an array")
+        self.assert_has_error(errors, "mpcs: must be an array")
         self.assert_has_error(errors, "extra: unknown top-level key")
 
     def test_required_fields_and_identifier_rules_are_enforced(self) -> None:
@@ -119,6 +148,10 @@ class ValidateRegistryOfflineTests(unittest.TestCase):
         assert isinstance(pdk, dict)
         pdk["id"] = ""
         del pdk["description"]
+        mpc = registry["mpcs"][0]
+        assert isinstance(mpc, dict)
+        mpc["id"] = "MPC Frame"
+        del mpc["homepage"]
 
         errors = self.errors_for(registry)
 
@@ -126,16 +159,21 @@ class ValidateRegistryOfflineTests(unittest.TestCase):
         self.assert_has_error(errors, "tools[0].name: must match")
         self.assert_has_error(errors, "pdks[0].description: missing required field")
         self.assert_has_error(errors, "pdks[0].id: must be a non-empty stable identifier")
+        self.assert_has_error(errors, "mpcs[0].homepage: missing required field")
+        self.assert_has_error(errors, "mpcs[0].id: must match")
 
     def test_duplicate_entry_ids_and_empty_versions_or_platforms_fail(self) -> None:
-        """Reject duplicate tool/PDK ids and empty version or platform sections."""
+        """Reject duplicate resource ids and empty version or platform sections."""
         registry = valid_registry()
         tool = copy.deepcopy(registry["tools"][0])
         pdk = copy.deepcopy(registry["pdks"][0])
+        mpc = copy.deepcopy(registry["mpcs"][0])
         assert isinstance(registry["tools"], list)
         assert isinstance(registry["pdks"], list)
+        assert isinstance(registry["mpcs"], list)
         registry["tools"].append(tool)
         registry["pdks"].append(pdk)
+        registry["mpcs"].append(mpc)
         first_tool = registry["tools"][0]
         first_pdk = registry["pdks"][0]
         assert isinstance(first_tool, dict)
@@ -151,6 +189,7 @@ class ValidateRegistryOfflineTests(unittest.TestCase):
 
         self.assert_has_error(errors, "tools[1].name: duplicate tool name 'yosys'")
         self.assert_has_error(errors, "pdks[1].id: duplicate PDK id 'ics55'")
+        self.assert_has_error(errors, "mpcs[1].id: duplicate MPC id 'mpc-frame'")
         self.assert_has_error(errors, "tools[0].versions: must be a non-empty array")
         self.assert_has_error(
             errors,
@@ -197,6 +236,22 @@ class ValidateRegistryOfflineTests(unittest.TestCase):
         self.assert_has_error(
             errors,
             "pdks[0].versions: mixed or unsupported version format",
+        )
+
+    def test_mpc_versions_allow_universal_archives_but_not_dependencies(self) -> None:
+        """MPC source archives are platform-independent and have no installer dependencies."""
+        registry = valid_registry()
+        mpc_version = registry["mpcs"][0]["versions"][0]
+        assert isinstance(mpc_version, dict)
+
+        self.assertEqual([], self.errors_for(registry))
+
+        mpc_version["requires"] = []
+        errors = self.errors_for(registry)
+
+        self.assert_has_error(
+            errors,
+            "mpcs[0].versions[0].requires: unknown version field",
         )
 
     def test_requires_references_and_version_fields_are_validated(self) -> None:

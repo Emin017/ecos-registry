@@ -17,17 +17,18 @@ ECOS_REGISTRY_URL=https://<owner>.github.io/<repo>/tool-registry.json
 ## Files
 
 - `tool-registry.json`: deployed registry consumed by ECOS Studio.
-- `examples/tool-registry.example.json`: non-empty template for tools and PDKs.
+- `examples/tool-registry.example.json`: non-empty template for tools, PDKs, and MPC source archives.
 - `.github/workflows/ci.yml`: validates registry changes on pull requests and `main`.
 - `.github/workflows/pages.yml`: validates the registry and deploys it to GitHub Pages.
 
 ## Registry Notes
 
 - `schema_version` must be `2`.
-- `tools` and `pdks` must be arrays.
+- `tools`, `pdks`, and `mpcs` must be arrays.
 - Put the newest version first in each `versions` array. ECOS Studio treats `versions[0]` as the latest version.
 - Platform keys are produced by ECOS Studio, for example `linux-x86_64` and `darwin-arm64`.
-- PDKs may use `all-platform` for platform-independent archives.
+- PDKs and MPC source archives may use `all-platform` for platform-independent archives.
+- MPC `version` values must use sortable dotted numeric or date versions. Pin the archive URL to an immutable commit or release asset; do not use mutable branch URLs.
 - Asset archives must be `.tar`, `.tar.gz`, `.tgz`, or `.zip`.
 - `sha256` must match the archive bytes exactly.
 - `size` is the archive size in bytes.
