@@ -44,5 +44,27 @@
         }
       ]
     }
+  ],
+  "mpcs": [
+    {
+      "id": "mpc-frame",
+      "display_name": "MPC Frame",
+      "description": "Multi-project chip frame template.",
+      "category": "mpc",
+      "homepage": "https://github.com/openecos-projects/mpc-frame",
+      "versions": [
+        {
+          "version": "0.1.0",
+          "platforms": {
+            "all-platform": {
+              "url": "https://example.com/mpc-frame-0.1.0.tar.gz",
+              "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+              "size": 470085,
+              "strip_prefix": "mpc-frame-0.1.0"
+            }
+          }
+        }
+      ]
+    }
   ]
 }

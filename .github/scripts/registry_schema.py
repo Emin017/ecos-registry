@@ -23,8 +23,17 @@ PDK_REQUIRED_FIELDS = (
     "homepage",
     "versions",
 )
+MPC_REQUIRED_FIELDS = (
+    "id",
+    "display_name",
+    "description",
+    "category",
+    "homepage",
+    "versions",
+)
 VERSION_REQUIRED_FIELDS = ("version", "platforms")
 ALLOWED_VERSION_FIELDS = frozenset(VERSION_REQUIRED_FIELDS + ("requires",))
+MPC_ALLOWED_VERSION_FIELDS = frozenset(VERSION_REQUIRED_FIELDS)
 PLATFORM_REQUIRED_FIELDS = ("url", "sha256", "size")
 ALLOWED_PLATFORM_FIELDS = frozenset(
     PLATFORM_REQUIRED_FIELDS
@@ -55,11 +64,34 @@ class CollectionSchema:
     label: str
     id_field: str
     required_fields: tuple[str, ...]
+    allowed_version_fields: frozenset[str]
 
 
 COLLECTION_SCHEMAS = (
-    CollectionSchema("tools", "tool", "tool", "name", TOOL_REQUIRED_FIELDS),
-    CollectionSchema("pdks", "pdk", "PDK", "id", PDK_REQUIRED_FIELDS),
+    CollectionSchema(
+        "tools",
+        "tool",
+        "tool",
+        "name",
+        TOOL_REQUIRED_FIELDS,
+        ALLOWED_VERSION_FIELDS,
+    ),
+    CollectionSchema(
+        "pdks",
+        "pdk",
+        "PDK",
+        "id",
+        PDK_REQUIRED_FIELDS,
+        ALLOWED_VERSION_FIELDS,
+    ),
+    CollectionSchema(
+        "mpcs",
+        "mpc",
+        "MPC",
+        "id",
+        MPC_REQUIRED_FIELDS,
+        MPC_ALLOWED_VERSION_FIELDS,
+    ),
 )
 ALLOWED_TOP_LEVEL_KEYS = frozenset(
     ("schema_version", *(schema.key for schema in COLLECTION_SCHEMAS))

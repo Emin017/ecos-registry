@@ -57,6 +57,7 @@ class RefreshRegistryLocksTests(unittest.TestCase):
                 }
             ],
             "pdks": [],
+            "mpcs": [],
         }
 
         def unexpected_fetch(_url: str) -> object:
@@ -96,6 +97,7 @@ class RefreshRegistryLocksTests(unittest.TestCase):
                 }
             ],
             "pdks": [],
+            "mpcs": [],
         }
 
         result = refresh_registry_locks.refresh_registry_data(
@@ -140,6 +142,7 @@ class RefreshRegistryLocksTests(unittest.TestCase):
                 }
             ],
             "pdks": [],
+            "mpcs": [],
         }
 
         result = refresh_registry_locks.refresh_registry_data(
@@ -185,6 +188,7 @@ class RefreshRegistryLocksTests(unittest.TestCase):
                 }
             ],
             "pdks": [],
+            "mpcs": [],
         }
 
         def fetch_metadata(url: str) -> dict[str, object]:
@@ -213,6 +217,50 @@ class RefreshRegistryLocksTests(unittest.TestCase):
         self.assertEqual(1, len(result.failures))
         self.assertIn("linux-x86_64", result.failures[0])
         self.assertIn("temporary metadata failure", result.failures[0])
+
+    def test_refreshes_mpc_platform_locks(self) -> None:
+        registry = {
+            "schema_version": 2,
+            "tools": [],
+            "pdks": [],
+            "mpcs": [
+                {
+                    "id": "mpc-frame",
+                    "versions": [
+                        {
+                            "version": "0.1.0",
+                            "platforms": {
+                                "all-platform": {
+                                    "url": "https://example.com/mpc-frame-0.1.0.tar.gz",
+                                    "metadata_url": "https://example.com/mpc-frame-0.1.0.metadata.json",
+                                    "sha256": "a" * 64,
+                                    "size": 1,
+                                }
+                            },
+                        }
+                    ],
+                }
+            ],
+        }
+
+        result = refresh_registry_locks.refresh_registry_data(
+            registry,
+            json_fetcher=lambda _url: {"sha256": "b" * 64, "size": 456},
+            text_fetcher=lambda _url: "",
+            size_fetcher=lambda _url: 0,
+        )
+
+        platform = registry["mpcs"][0]["versions"][0]["platforms"]["all-platform"]
+        self.assertEqual("b" * 64, platform["sha256"])
+        self.assertEqual(456, platform["size"])
+        self.assertEqual(
+            [
+                "mpcs[0].versions[0].platforms.all-platform.sha256 refreshed",
+                "mpcs[0].versions[0].platforms.all-platform.size refreshed",
+            ],
+            result.updates,
+        )
+        self.assertEqual([], result.failures)
 
     def test_fetch_url_size_falls_back_from_head_to_range_get(self) -> None:
         cases = (
