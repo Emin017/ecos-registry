@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+import copy
 from email.message import Message
+import hashlib
 import importlib.util
 import json
 from pathlib import Path
@@ -34,6 +36,20 @@ class FakeUrlResponse:
 
     def __exit__(self, *args: object) -> None:
         return None
+
+
+class FakeArchiveResponse:
+    def __init__(self, chunks: list[bytes]) -> None:
+        self._chunks = iter(chunks)
+
+    def __enter__(self) -> "FakeArchiveResponse":
+        return self
+
+    def __exit__(self, *args: object) -> None:
+        return None
+
+    def read(self, _size: int) -> bytes:
+        return next(self._chunks, b"")
 
 
 class RefreshRegistryLocksTests(unittest.TestCase):
@@ -261,6 +277,188 @@ class RefreshRegistryLocksTests(unittest.TestCase):
             result.updates,
         )
         self.assertEqual([], result.failures)
+
+    def test_refreshes_mpc_frame_from_github_branch_head(self) -> None:
+        old_commit = "a" * 40
+        new_commit = "b" * 40
+        registry = {
+            "schema_version": 2,
+            "tools": [],
+            "pdks": [],
+            "mpcs": [
+                {
+                    "id": "mpc-frame",
+                    "homepage": "https://github.com/openecos-projects/mpc-frame",
+                    "versions": [
+                        {
+                            "version": "0.1.0",
+                            "platforms": {
+                                "all-platform": {
+                                    "url": (
+                                        "https://github.com/openecos-projects/mpc-frame/"
+                                        f"archive/{old_commit}.tar.gz"
+                                    ),
+                                    "sha256": "a" * 64,
+                                    "size": 1,
+                                    "strip_prefix": f"mpc-frame-{old_commit}",
+                                    "update_source": {
+                                        "type": "github_branch",
+                                        "branch": "main",
+                                    },
+                                }
+                            },
+                        }
+                    ],
+                }
+            ],
+        }
+
+        expected_archive_url = (
+            "https://github.com/openecos-projects/mpc-frame/"
+            f"archive/{new_commit}.tar.gz"
+        )
+
+        def fetch_head(url: str) -> dict[str, object]:
+            self.assertEqual(
+                "https://api.github.com/repos/openecos-projects/mpc-frame/commits/main",
+                url,
+            )
+            return {"sha": new_commit}
+
+        def fetch_archive_lock(url: str) -> tuple[str, int]:
+            self.assertEqual(expected_archive_url, url)
+            return "c" * 64, 456
+
+        result = refresh_registry_locks.refresh_registry_data(
+            registry,
+            json_fetcher=fetch_head,
+            text_fetcher=lambda _url: self.fail("sidecar fetch must not run"),
+            size_fetcher=lambda _url: self.fail("size fetch must not run"),
+            archive_lock_fetcher=fetch_archive_lock,
+        )
+
+        platform = registry["mpcs"][0]["versions"][0]["platforms"]["all-platform"]
+        self.assertEqual(expected_archive_url, platform["url"])
+        self.assertEqual("c" * 64, platform["sha256"])
+        self.assertEqual(456, platform["size"])
+        self.assertEqual(f"mpc-frame-{new_commit}", platform["strip_prefix"])
+        self.assertEqual(
+            [
+                "mpcs[0].versions[0].platforms.all-platform.url refreshed",
+                "mpcs[0].versions[0].platforms.all-platform.sha256 refreshed",
+                "mpcs[0].versions[0].platforms.all-platform.size refreshed",
+                "mpcs[0].versions[0].platforms.all-platform.strip_prefix refreshed",
+            ],
+            result.updates,
+        )
+        self.assertEqual([], result.failures)
+
+    def test_unchanged_github_branch_head_skips_archive_download(self) -> None:
+        commit = "b" * 40
+        platform = {
+            "url": (
+                "https://github.com/openecos-projects/mpc-frame/"
+                f"archive/{commit}.tar.gz"
+            ),
+            "sha256": "c" * 64,
+            "size": 456,
+            "strip_prefix": f"mpc-frame-{commit}",
+            "update_source": {
+                "type": "github_branch",
+                "branch": "main",
+            },
+        }
+        registry = {
+            "schema_version": 2,
+            "tools": [],
+            "pdks": [],
+            "mpcs": [
+                {
+                    "id": "mpc-frame",
+                    "homepage": "https://github.com/openecos-projects/mpc-frame",
+                    "versions": [
+                        {
+                            "version": "0.1.0",
+                            "platforms": {"all-platform": platform},
+                        }
+                    ],
+                }
+            ],
+        }
+
+        result = refresh_registry_locks.refresh_registry_data(
+            registry,
+            json_fetcher=lambda _url: {"sha": commit},
+            archive_lock_fetcher=lambda _url: self.fail(
+                "unchanged HEAD must not download"
+            ),
+        )
+
+        self.assertEqual([], result.updates)
+        self.assertEqual([], result.failures)
+
+    def test_failed_github_branch_update_does_not_mutate_platform(self) -> None:
+        old_commit = "a" * 40
+        platform = {
+            "url": (
+                "https://github.com/openecos-projects/mpc-frame/"
+                f"archive/{old_commit}.tar.gz"
+            ),
+            "sha256": "a" * 64,
+            "size": 1,
+            "strip_prefix": f"mpc-frame-{old_commit}",
+            "update_source": {
+                "type": "github_branch",
+                "branch": "main",
+            },
+        }
+        expected_platform = copy.deepcopy(platform)
+        registry = {
+            "schema_version": 2,
+            "tools": [],
+            "pdks": [],
+            "mpcs": [
+                {
+                    "id": "mpc-frame",
+                    "homepage": "https://github.com/openecos-projects/mpc-frame",
+                    "versions": [
+                        {
+                            "version": "0.1.0",
+                            "platforms": {"all-platform": platform},
+                        }
+                    ],
+                }
+            ],
+        }
+
+        result = refresh_registry_locks.refresh_registry_data(
+            registry,
+            json_fetcher=lambda _url: {"sha": "b" * 40},
+            archive_lock_fetcher=lambda _url: (_ for _ in ()).throw(
+                RuntimeError("archive unavailable")
+            ),
+        )
+
+        self.assertEqual(expected_platform, platform)
+        self.assertEqual([], result.updates)
+        self.assertEqual(1, len(result.failures))
+        self.assertIn("archive unavailable", result.failures[0])
+
+    def test_fetch_archive_lock_calculates_sha256_and_size(self) -> None:
+        original_urlopen = refresh_registry_locks.urlopen
+        try:
+            refresh_registry_locks.urlopen = lambda _url, *, timeout: FakeArchiveResponse(
+                [b"archive ", b"bytes"]
+            )
+
+            sha256, size = refresh_registry_locks.fetch_archive_lock(
+                "https://example.com/archive.tar.gz"
+            )
+        finally:
+            refresh_registry_locks.urlopen = original_urlopen
+
+        self.assertEqual(hashlib.sha256(b"archive bytes").hexdigest(), sha256)
+        self.assertEqual(len(b"archive bytes"), size)
 
     def test_fetch_url_size_falls_back_from_head_to_range_get(self) -> None:
         cases = (
