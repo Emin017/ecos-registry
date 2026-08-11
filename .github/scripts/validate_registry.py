@@ -18,9 +18,12 @@ from registry_schema import (
     ALLOWED_PLATFORM_FIELDS,
     ALLOWED_SUPPLEMENTAL_ASSET_FIELDS,
     ALLOWED_TOP_LEVEL_KEYS,
+    ALLOWED_UPDATE_SOURCE_FIELDS,
     ARCHIVE_SUFFIXES,
     COLLECTION_SCHEMAS,
     DATE_VERSION_RE,
+    GITHUB_BRANCH_UPDATE_SOURCE_TYPE,
+    github_repository_from_homepage,
     IDENTIFIER_RE,
     NUMERIC_VERSION_RE,
     PLATFORM_REQUIRED_FIELDS,
@@ -29,6 +32,7 @@ from registry_schema import (
     SHA256_RE,
     SIDECAR_URL_SUFFIXES,
     SUPPLEMENTAL_ASSET_REQUIRED_FIELDS,
+    UPDATE_SOURCE_REQUIRED_FIELDS,
     VERSION_REQUIRED_FIELDS,
     CollectionSchema,
 )
@@ -167,6 +171,7 @@ def _validate_entries(
             versions,
             f"{entry_path}.versions",
             entry_type=schema.resource_type,
+            homepage=entry.get("homepage"),
             allowed_version_fields=schema.allowed_version_fields,
             errors=errors,
             asset_urls=asset_urls,
@@ -208,6 +213,7 @@ def _validate_versions(
     versions: list[Any],
     path: str,
     entry_type: str,
+    homepage: object,
     allowed_version_fields: frozenset[str],
     errors: list[str],
     asset_urls: list[AssetUrl],
@@ -255,6 +261,7 @@ def _validate_versions(
             platforms,
             f"{version_path}.platforms",
             entry_type,
+            homepage,
             errors,
             asset_urls,
         )
@@ -349,6 +356,7 @@ def _validate_platforms(
     platforms: dict[str, Any],
     path: str,
     entry_type: str,
+    homepage: object,
     errors: list[str],
     asset_urls: list[AssetUrl],
 ) -> None:
@@ -392,6 +400,13 @@ def _validate_platforms(
             platform["strip_prefix"]
         ):
             errors.append(f"{platform_path}.strip_prefix: must be a non-empty string")
+        if "update_source" in platform:
+            _validate_update_source(
+                platform["update_source"],
+                f"{platform_path}.update_source",
+                homepage,
+                errors,
+            )
         if "supplemental_assets" in platform:
             _validate_supplemental_assets(
                 platform["supplemental_assets"],
@@ -425,6 +440,44 @@ def _validate_sidecar_url(value: object, path: str, errors: list[str]) -> bool:
         suffixes=SIDECAR_URL_SUFFIXES,
         suffix_error="unsupported sidecar URL suffix",
     )
+
+
+def _validate_update_source(
+    value: object,
+    path: str,
+    homepage: object,
+    errors: list[str],
+) -> None:
+    if not isinstance(value, dict):
+        errors.append(f"{path}: must be an object")
+        return
+
+    _require_fields(value, UPDATE_SOURCE_REQUIRED_FIELDS, path, errors)
+    for field in value:
+        if field not in ALLOWED_UPDATE_SOURCE_FIELDS:
+            errors.append(f"{path}.{field}: unknown update source field")
+
+    source_type = value.get("type")
+    if "type" in value and source_type != GITHUB_BRANCH_UPDATE_SOURCE_TYPE:
+        errors.append(
+            f"{path}.type: must equal '{GITHUB_BRANCH_UPDATE_SOURCE_TYPE}'"
+        )
+
+    branch = value.get("branch")
+    if "branch" in value and (
+        not _is_non_empty_string(branch) or _contains_url_control_character(branch)
+    ):
+        errors.append(
+            f"{path}.branch: must be a non-empty branch name without whitespace or control characters"
+        )
+
+    if (
+        source_type == GITHUB_BRANCH_UPDATE_SOURCE_TYPE
+        and github_repository_from_homepage(homepage) is None
+    ):
+        errors.append(
+            f"{path}: github_branch requires the entry homepage to be a canonical GitHub repository URL"
+        )
 
 
 def _validate_http_url(

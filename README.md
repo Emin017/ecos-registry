@@ -33,6 +33,9 @@ ECOS_REGISTRY_URL=https://<owner>.github.io/<repo>/tool-registry.json
 - `sha256` must match the archive bytes exactly.
 - `size` is the archive size in bytes.
 - `strip_prefix` is optional and removes a top-level archive directory during extraction.
+- A platform may set `update_source` to a `github_branch` object with `branch`.
+  The scheduled lock refresh resolves that branch on the entry's canonical GitHub
+  `homepage` and replaces the archive URL and lock fields with an immutable commit archive.
 
 ## Local Validation
 

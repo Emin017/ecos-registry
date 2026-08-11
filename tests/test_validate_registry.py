@@ -94,6 +94,10 @@ def valid_registry() -> dict[str, object]:
                                 "sha256": "c" * 64,
                                 "size": 789,
                                 "strip_prefix": "mpc-frame-0.1.0",
+                                "update_source": {
+                                    "type": "github_branch",
+                                    "branch": "main",
+                                },
                             }
                         },
                     }
@@ -392,6 +396,34 @@ class ValidateRegistryOfflineTests(unittest.TestCase):
         self.assertEqual(
             1,
             sum("platforms.linux-x86_64.size" in error for error in errors),
+        )
+
+    def test_github_branch_update_source_uses_the_entry_homepage(self) -> None:
+        """Reject malformed branch tracking and duplicate repository configuration."""
+        registry = valid_registry()
+        mpc = registry["mpcs"][0]
+        assert isinstance(mpc, dict)
+        mpc["homepage"] = "https://example.com/mpc-frame"
+        platform = mpc["versions"][0]["platforms"]["all-platform"]
+        assert isinstance(platform, dict)
+        source = platform["update_source"]
+        assert isinstance(source, dict)
+        source["branch"] = "bad branch"
+        source["repository"] = "openecos-projects/mpc-frame"
+
+        errors = self.errors_for(registry)
+
+        self.assert_has_error(
+            errors,
+            "mpcs[0].versions[0].platforms.all-platform.update_source.branch: must be a non-empty branch name",
+        )
+        self.assert_has_error(
+            errors,
+            "mpcs[0].versions[0].platforms.all-platform.update_source.repository: unknown update source field",
+        )
+        self.assert_has_error(
+            errors,
+            "mpcs[0].versions[0].platforms.all-platform.update_source: github_branch requires the entry homepage",
         )
 
     def test_asset_must_have_checksum_and_size_source(self) -> None:
