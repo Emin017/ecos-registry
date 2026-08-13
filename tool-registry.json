@@ -315,10 +315,10 @@
           "version": "0.1.0",
           "platforms": {
             "all-platform": {
-              "url": "https://github.com/openecos-projects/mpc-frame/archive/ae966dd6c53ed2e626ac585c78501c60abfbe1fd.tar.gz",
-              "sha256": "454ef359d7142962491d70a13ef3012f9043a57edb2cc05028f968e3e9f8f0fe",
-              "size": 480147,
-              "strip_prefix": "mpc-frame-ae966dd6c53ed2e626ac585c78501c60abfbe1fd",
+              "url": "https://github.com/openecos-projects/mpc-frame/archive/80f226fdd11d7a9e651ca0b113d320606b2c549c.tar.gz",
+              "sha256": "d1f1dca00198411de5a96dd28b1c861e946b2d2c5a072863b7630759414b4fc8",
+              "size": 485867,
+              "strip_prefix": "mpc-frame-80f226fdd11d7a9e651ca0b113d320606b2c549c",
               "update_source": {
                 "type": "github_branch",
                 "branch": "main"
