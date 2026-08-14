@@ -237,55 +237,55 @@
       "homepage": "https://github.com/openecos-projects/icsprout55-pdk",
       "versions": [
         {
-          "version": "1.10.100",
+          "version": "1.10.102",
           "platforms": {
             "all-platform": {
-              "url": "https://github.com/openecos-projects/icsprout55-pdk/archive/refs/tags/v1.10.100.tar.gz",
-              "sha256": "c249338cd909ac867d94909406edc47f2efec6b5a82e964f8d59d8770d456633",
-              "size": 49757262,
-              "strip_prefix": "icsprout55-pdk-1.10.100",
+              "url": "https://github.com/openecos-projects/icsprout55-pdk/archive/refs/tags/v1.10.102.tar.gz",
+              "sha256": "68f81ab68ff0e1e7f41ce0c7e1088605f08cd89acdd8dcfd7594b801c98a3074",
+              "size": 49757561,
+              "strip_prefix": "icsprout55-pdk-1.10.102",
               "supplemental_assets": [
                 {
                   "path": "ics55_LLSC_H7CH_gds.tar.bz2",
-                  "url": "https://github.com/openecos-projects/icsprout55-pdk/releases/download/v1.10.100/ics55_LLSC_H7CH_gds.tar.bz2",
-                  "sha256": "c1138641deb9683422bdc4da7828af0aedeae1b4424c78c288722f5fdb7fc273",
-                  "size": 1502571
+                  "url": "https://github.com/openecos-projects/icsprout55-pdk/releases/download/v1.10.102/ics55_LLSC_H7CH_gds.tar.bz2",
+                  "sha256": "6268684fdd0784087adc1a972125f9001bc9761c3142ab954d2a9eade53d5490",
+                  "size": 1502685
                 },
                 {
                   "path": "ics55_LLSC_H7CH_liberty.tar.bz2",
-                  "url": "https://github.com/openecos-projects/icsprout55-pdk/releases/download/v1.10.100/ics55_LLSC_H7CH_liberty.tar.bz2",
-                  "sha256": "bd8327c9694b625275bebf63743d49e9e019f23be76152d2edbd530e150ecbba",
-                  "size": 76376908
+                  "url": "https://github.com/openecos-projects/icsprout55-pdk/releases/download/v1.10.102/ics55_LLSC_H7CH_liberty.tar.bz2",
+                  "sha256": "bb79e74960dec7032295e621933410f51963b9cafbd956a196148d44fe27fb2c",
+                  "size": 76358374
                 },
                 {
                   "path": "ics55_LLSC_H7CL_gds.tar.bz2",
-                  "url": "https://github.com/openecos-projects/icsprout55-pdk/releases/download/v1.10.100/ics55_LLSC_H7CL_gds.tar.bz2",
-                  "sha256": "10adbc3edb4618639544227f6bbc78208848929f6a2e3468b3064ab1ede79942",
-                  "size": 1507950
+                  "url": "https://github.com/openecos-projects/icsprout55-pdk/releases/download/v1.10.102/ics55_LLSC_H7CL_gds.tar.bz2",
+                  "sha256": "9a643ae864d178f45fec4aa59dc98f0420894760d8a431ce0fd640b97e1c2f68",
+                  "size": 1512316
                 },
                 {
                   "path": "ics55_LLSC_H7CL_liberty.tar.bz2",
-                  "url": "https://github.com/openecos-projects/icsprout55-pdk/releases/download/v1.10.100/ics55_LLSC_H7CL_liberty.tar.bz2",
-                  "sha256": "8312dd3f2e4fed8a63fd26c51deb8c79a75becfdfe544e44cce164e87f7875f4",
-                  "size": 77545734
+                  "url": "https://github.com/openecos-projects/icsprout55-pdk/releases/download/v1.10.102/ics55_LLSC_H7CL_liberty.tar.bz2",
+                  "sha256": "c2e7a1eea77772582414108fce178a0f444a61bd4e3ce0a2811ef27caa719fa8",
+                  "size": 77546993
                 },
                 {
                   "path": "ics55_LLSC_H7CR_gds.tar.bz2",
-                  "url": "https://github.com/openecos-projects/icsprout55-pdk/releases/download/v1.10.100/ics55_LLSC_H7CR_gds.tar.bz2",
-                  "sha256": "279a6775b84270de84761a08a1c4b523eca478747273178bf252816be585fd9d",
-                  "size": 1489068
+                  "url": "https://github.com/openecos-projects/icsprout55-pdk/releases/download/v1.10.102/ics55_LLSC_H7CR_gds.tar.bz2",
+                  "sha256": "525a7a486e15e36888e4ce08887c946cd16c60dc2c90819fb493d865ed38cc2b",
+                  "size": 1489081
                 },
                 {
                   "path": "ics55_LLSC_H7CR_liberty.tar.bz2",
-                  "url": "https://github.com/openecos-projects/icsprout55-pdk/releases/download/v1.10.100/ics55_LLSC_H7CR_liberty.tar.bz2",
-                  "sha256": "faa3fc2f3ef8560c2d7cafc7800ecee39b69b8d177b14d098ed94062ba3f6e5c",
-                  "size": 77016163
+                  "url": "https://github.com/openecos-projects/icsprout55-pdk/releases/download/v1.10.102/ics55_LLSC_H7CR_liberty.tar.bz2",
+                  "sha256": "ef33eec4cd5f617d3dd0073122e556df06560dd65eebf805648640038dedc2b7",
+                  "size": 76996026
                 },
                 {
                   "path": "ICsprout_55LLULP1233_IO_251013_gds.tar.bz2",
-                  "url": "https://github.com/openecos-projects/icsprout55-pdk/releases/download/v1.10.100/ICsprout_55LLULP1233_IO_251013_gds.tar.bz2",
-                  "sha256": "c775a0078316f29de5545f5c39f79563c3ae10dd6fe4d90df619b72f6d29db54",
-                  "size": 7574722
+                  "url": "https://github.com/openecos-projects/icsprout55-pdk/releases/download/v1.10.102/ICsprout_55LLULP1233_IO_251013_gds.tar.bz2",
+                  "sha256": "47d248be322a6f054a0ab11fe2f2ee83ad76f9ce15d6f4cd53a81c8d08c7693b",
+                  "size": 7728902
                 }
               ],
               "post_install": [
