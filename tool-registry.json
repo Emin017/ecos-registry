@@ -2,6 +2,29 @@
   "schema_version": 2,
   "tools": [
     {
+      "name": "ecc",
+      "display_name": "ECOS Chip Compiler",
+      "description": "ECOS Chip Compiler (ECC) CLI integrating Yosys, ECC-DreamPlace, ECC-Tools, and KLayout for a complete RTL-to-GDS design flow.",
+      "category": "backend",
+      "homepage": "https://github.com/openecos-projects/ecc",
+      "versions": [
+        {
+          "version": "0.1.0-alpha.12",
+          "platforms": {
+            "linux-x86_64": {
+              "url": "https://github.com/openecos-projects/ecc/releases/download/v0.1.0-alpha.12/ecc-cli-linux-x86_64.tar.gz",
+              "sha256": "fb63d96bf83e999ace04c1d21c2e0767ab5452875651b7ccc5ddb9610c8180aa",
+              "size": 513976534
+            }
+          },
+          "requires": [
+            "tool:yosys",
+            "pdk:ics55"
+          ]
+        }
+      ]
+    },
+    {
       "name": "ecc-fe",
       "display_name": "ECC-FE Frontend Flow",
       "description": "ECOS frontend flow runtime CLI used by ECOS Studio to create workspaces and run Review, Elab, Lint, Sim, and Wave metadata steps.",
