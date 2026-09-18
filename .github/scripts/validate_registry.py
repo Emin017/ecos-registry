@@ -15,6 +15,7 @@ from typing import TypeGuard
 from urllib.parse import urlparse
 
 from registry_schema import (
+    ALLOWED_PACKAGE_FIELDS,
     ALLOWED_PLATFORM_FIELDS,
     ALLOWED_SUPPLEMENTAL_ASSET_FIELDS,
     ALLOWED_TOP_LEVEL_KEYS,
@@ -26,6 +27,7 @@ from registry_schema import (
     github_repository_from_homepage,
     IDENTIFIER_RE,
     NUMERIC_VERSION_RE,
+    PACKAGE_REQUIRED_FIELDS,
     PLATFORM_REQUIRED_FIELDS,
     RESOURCE_DEPENDENCY_RE,
     SCHEMA_VERSION,
@@ -420,6 +422,13 @@ def _validate_platforms(
                 f"{platform_path}.post_install",
                 errors,
             )
+        if "packages" in platform:
+            _validate_packages(
+                platform["packages"],
+                f"{platform_path}.packages",
+                errors,
+                asset_urls,
+            )
 
 
 def _validate_platform_url(value: object, path: str, errors: list[str]) -> bool:
@@ -580,6 +589,64 @@ def _validate_supplemental_assets(
 def _supplemental_asset_path_error(value: object) -> str | None:
     if _relative_path_issue(value, require_normalized=True) is not None:
         return "must be a normalized relative path"
+    return None
+
+
+def _validate_packages(
+    value: object,
+    path: str,
+    errors: list[str],
+    asset_urls: list[AssetUrl],
+) -> None:
+    if not isinstance(value, list):
+        errors.append(f"{path}: must be an array")
+        return
+
+    seen_paths: dict[str, str] = {}
+    for index, package in enumerate(value):
+        package_path = f"{path}[{index}]"
+        if not isinstance(package, dict):
+            errors.append(f"{package_path}: must be an object")
+            continue
+
+        _require_fields(package, PACKAGE_REQUIRED_FIELDS, package_path, errors)
+        for field in package:
+            if field not in ALLOWED_PACKAGE_FIELDS:
+                errors.append(f"{package_path}.{field}: unknown package field")
+
+        relative_path = package.get("path")
+        path_error = _supplemental_asset_path_error(relative_path)
+        if path_error is not None:
+            errors.append(f"{package_path}.path: {path_error}")
+        elif isinstance(relative_path, str):
+            if relative_path in seen_paths:
+                errors.append(
+                    f"{package_path}.path: duplicate path {relative_path!r}; "
+                    f"first seen at {seen_paths[relative_path]}"
+                )
+            else:
+                seen_paths[relative_path] = f"{package_path}.path"
+
+        for url_field in ("url", "cnb_url"):
+            url_path = f"{package_path}.{url_field}"
+            if _validate_platform_url(package.get(url_field), url_path, errors):
+                asset_urls.append(AssetUrl(path=url_path, url=package[url_field]))
+        _validate_sha256(package.get("sha256", _MISSING), f"{package_path}.sha256", errors)
+        _validate_size(package.get("size", _MISSING), f"{package_path}.size", errors)
+
+        dest_error = _package_dest_error(package.get("dest", _MISSING))
+        if dest_error is not None:
+            errors.append(f"{package_path}.dest: {dest_error}")
+
+
+def _package_dest_error(value: object) -> str | None:
+    if value is _MISSING:
+        return None
+    issue = _relative_path_issue(value, require_normalized=False)
+    if issue == "escapes":
+        return "must stay inside the install root"
+    if issue is not None:
+        return "must be a non-empty relative path"
     return None
 
 
