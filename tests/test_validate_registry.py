@@ -655,7 +655,7 @@ class ValidateRegistryOfflineTests(unittest.TestCase):
         )
         self.assert_has_error(errors, "packages[1].size: must be a positive integer")
         self.assert_has_error(
-            errors, "packages[1].dest: must be a non-empty relative path"
+            errors, "packages[1].dest: must be a normalized relative path"
         )
         self.assert_has_error(errors, "packages[1].extra: unknown package field")
         self.assert_has_error(
@@ -666,6 +666,11 @@ class ValidateRegistryOfflineTests(unittest.TestCase):
         self.assert_has_error(errors, "packages[4].sha256: missing required field")
         self.assert_has_error(errors, "packages[4].size: missing required field")
         self.assert_has_error(errors, "packages[4].dest: missing required field")
+
+        self.assertIsNone(validate_registry._package_dest_error("IP/STD_cell/ics55"))
+        self.assertIsNotNone(validate_registry._package_dest_error("."))
+        self.assertIsNotNone(validate_registry._package_dest_error("IP/../IP"))
+        self.assertIsNotNone(validate_registry._package_dest_error("IP//STD"))
 
     def test_relative_path_callers_keep_their_distinct_policies(self) -> None:
         """Share traversal checks without conflating archive and cwd rules."""

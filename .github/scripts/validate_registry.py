@@ -642,11 +642,10 @@ def _validate_packages(
 def _package_dest_error(value: object) -> str | None:
     if value is _MISSING:
         return None
-    issue = _relative_path_issue(value, require_normalized=False)
-    if issue == "escapes":
-        return "must stay inside the install root"
-    if issue is not None:
-        return "must be a non-empty relative path"
+    # The installer expands dest as ${root}/${dest}; require a normalized
+    # relative path so "." or "IP/../IP" cannot merge into the base root.
+    if _relative_path_issue(value, require_normalized=True) is not None:
+        return "must be a normalized relative path"
     return None
 
 
