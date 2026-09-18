@@ -48,10 +48,13 @@ ALLOWED_PLATFORM_FIELDS = frozenset(
         "update_source",
         "supplemental_assets",
         "post_install",
+        "packages",
     )
 )
 SUPPLEMENTAL_ASSET_REQUIRED_FIELDS = ("path", "url", "sha256", "size")
 ALLOWED_SUPPLEMENTAL_ASSET_FIELDS = frozenset(SUPPLEMENTAL_ASSET_REQUIRED_FIELDS)
+PACKAGE_REQUIRED_FIELDS = ("path", "url", "cnb_url", "sha256", "size", "dest")
+ALLOWED_PACKAGE_FIELDS = frozenset(PACKAGE_REQUIRED_FIELDS)
 ARCHIVE_SUFFIXES = (".tar", ".tar.gz", ".tar.bz2", ".tar.xz", ".tgz", ".txz", ".zip")
 SIDECAR_URL_SUFFIXES = (".json", ".sha256", ".txt")
 REMOTE_LOCK_SOURCE_FIELDS = ("metadata_url", "sha256_url")

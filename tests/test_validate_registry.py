@@ -603,6 +603,75 @@ class ValidateRegistryOfflineTests(unittest.TestCase):
             "supplemental_assets[4].size: missing required field",
         )
 
+    def test_packages_are_locked_and_path_safe(self) -> None:
+        """Reject malformed, mutable, duplicate, or escaping PDK packages."""
+        registry = valid_registry()
+        platform = registry["pdks"][0]["versions"][0]["platforms"]["all-platform"]
+        assert isinstance(platform, dict)
+        platform["packages"] = [
+            "not-an-object",
+            {
+                "path": "../escape.tar.bz2",
+                "url": "ftp://example.com/escape.bin",
+                "cnb_url": "https://mirror.example.com/escape.bin",
+                "sha256": "A" * 64,
+                "size": 0,
+                "dest": "/absolute/dest",
+                "extra": True,
+            },
+            {
+                "path": "locked/asset.tar.bz2",
+                "url": "https://example.com/asset.tar.bz2",
+                "cnb_url": "https://mirror.example.com/asset.tar.bz2",
+                "sha256": "c" * 64,
+                "size": 123,
+                "dest": "lib/ics55",
+            },
+            {
+                "path": "locked/asset.tar.bz2",
+                "url": "https://example.com/asset-copy.tar.bz2",
+                "cnb_url": "https://mirror.example.com/asset-copy.tar.bz2",
+                "sha256": "d" * 64,
+                "size": 456,
+                "dest": "lib/ics55-copy",
+            },
+            {"path": "missing-fields.tar.bz2"},
+        ]
+
+        errors = self.errors_for(registry)
+
+        self.assert_has_error(
+            errors,
+            "pdks[0].versions[0].platforms.all-platform.packages[0]: must be an object",
+        )
+        self.assert_has_error(
+            errors, "packages[1].path: must be a normalized relative path"
+        )
+        self.assert_has_error(errors, "packages[1].url: must use http or https")
+        self.assert_has_error(errors, "packages[1].url: unsupported archive suffix")
+        self.assert_has_error(errors, "packages[1].cnb_url: unsupported archive suffix")
+        self.assert_has_error(
+            errors, "packages[1].sha256: must be a lowercase 64-character hex string"
+        )
+        self.assert_has_error(errors, "packages[1].size: must be a positive integer")
+        self.assert_has_error(
+            errors, "packages[1].dest: must be a normalized relative path"
+        )
+        self.assert_has_error(errors, "packages[1].extra: unknown package field")
+        self.assert_has_error(
+            errors, "packages[3].path: duplicate path 'locked/asset.tar.bz2'"
+        )
+        self.assert_has_error(errors, "packages[4].url: missing required field")
+        self.assert_has_error(errors, "packages[4].cnb_url: missing required field")
+        self.assert_has_error(errors, "packages[4].sha256: missing required field")
+        self.assert_has_error(errors, "packages[4].size: missing required field")
+        self.assert_has_error(errors, "packages[4].dest: missing required field")
+
+        self.assertIsNone(validate_registry._package_dest_error("IP/STD_cell/ics55"))
+        self.assertIsNotNone(validate_registry._package_dest_error("."))
+        self.assertIsNotNone(validate_registry._package_dest_error("IP/../IP"))
+        self.assertIsNotNone(validate_registry._package_dest_error("IP//STD"))
+
     def test_relative_path_callers_keep_their_distinct_policies(self) -> None:
         """Share traversal checks without conflating archive and cwd rules."""
         self.assertIsNone(
