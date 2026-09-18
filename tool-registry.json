@@ -1,45 +1,150 @@
 {
+  "mpcs": [
+    {
+      "category": "mpc",
+      "description": "Multi-project chip frame template and reference SoC design.",
+      "display_name": "MPC Frame",
+      "homepage": "https://github.com/openecos-projects/mpc-frame",
+      "id": "mpc-frame",
+      "versions": [
+        {
+          "platforms": {
+            "all-platform": {
+              "sha256": "ead5db9dcbc081fd11e0549d6093d1f0190014bd818d28cf23be631d33b16dc0",
+              "size": 486715,
+              "strip_prefix": "mpc-frame-01ac0615e3b6d73db605afaf7c67851ef0cf5767",
+              "update_source": {
+                "branch": "main",
+                "type": "github_branch"
+              },
+              "url": "https://github.com/openecos-projects/mpc-frame/archive/01ac0615e3b6d73db605afaf7c67851ef0cf5767.tar.gz"
+            }
+          },
+          "version": "0.1.0"
+        }
+      ]
+    }
+  ],
+  "pdks": [
+    {
+      "category": "pdk",
+      "description": "ICsprout 55nm open-source process design kit.",
+      "display_name": "ICsprout 55nm PDK",
+      "homepage": "https://github.com/openecos-projects/icsprout55-pdk",
+      "id": "ics55",
+      "versions": [
+        {
+          "platforms": {
+            "all-platform": {
+              "packages": [
+                {
+                  "cnb_url": "https://cnb.cool/ecoslab/icsprout55-pdk/-/releases/download/v1.10.102/ics55_LLSC_H7CH_liberty.tar.bz2",
+                  "dest": "IP/STD_cell/ics55_LLSC_H7C_V1p10C100/ics55_LLSC_H7CH",
+                  "path": "ics55_LLSC_H7CH_liberty.tar.bz2",
+                  "sha256": "bb79e74960dec7032295e621933410f51963b9cafbd956a196148d44fe27fb2c",
+                  "size": 76358374,
+                  "url": "https://github.com/openecos-projects/icsprout55-pdk/releases/download/v1.10.102/ics55_LLSC_H7CH_liberty.tar.bz2"
+                },
+                {
+                  "cnb_url": "https://cnb.cool/ecoslab/icsprout55-pdk/-/releases/download/v1.10.102/ics55_LLSC_H7CL_liberty.tar.bz2",
+                  "dest": "IP/STD_cell/ics55_LLSC_H7C_V1p10C100/ics55_LLSC_H7CL",
+                  "path": "ics55_LLSC_H7CL_liberty.tar.bz2",
+                  "sha256": "c2e7a1eea77772582414108fce178a0f444a61bd4e3ce0a2811ef27caa719fa8",
+                  "size": 77546993,
+                  "url": "https://github.com/openecos-projects/icsprout55-pdk/releases/download/v1.10.102/ics55_LLSC_H7CL_liberty.tar.bz2"
+                },
+                {
+                  "cnb_url": "https://cnb.cool/ecoslab/icsprout55-pdk/-/releases/download/v1.10.102/ics55_LLSC_H7CR_liberty.tar.bz2",
+                  "dest": "IP/STD_cell/ics55_LLSC_H7C_V1p10C100/ics55_LLSC_H7CR",
+                  "path": "ics55_LLSC_H7CR_liberty.tar.bz2",
+                  "sha256": "ef33eec4cd5f617d3dd0073122e556df06560dd65eebf805648640038dedc2b7",
+                  "size": 76996026,
+                  "url": "https://github.com/openecos-projects/icsprout55-pdk/releases/download/v1.10.102/ics55_LLSC_H7CR_liberty.tar.bz2"
+                },
+                {
+                  "cnb_url": "https://cnb.cool/ecoslab/icsprout55-pdk/-/releases/download/v1.10.102/ics55_LLSC_H7CH_gds.tar.bz2",
+                  "dest": "IP/STD_cell/ics55_LLSC_H7C_V1p10C100/ics55_LLSC_H7CH",
+                  "path": "ics55_LLSC_H7CH_gds.tar.bz2",
+                  "sha256": "6268684fdd0784087adc1a972125f9001bc9761c3142ab954d2a9eade53d5490",
+                  "size": 1502685,
+                  "url": "https://github.com/openecos-projects/icsprout55-pdk/releases/download/v1.10.102/ics55_LLSC_H7CH_gds.tar.bz2"
+                },
+                {
+                  "cnb_url": "https://cnb.cool/ecoslab/icsprout55-pdk/-/releases/download/v1.10.102/ics55_LLSC_H7CL_gds.tar.bz2",
+                  "dest": "IP/STD_cell/ics55_LLSC_H7C_V1p10C100/ics55_LLSC_H7CL",
+                  "path": "ics55_LLSC_H7CL_gds.tar.bz2",
+                  "sha256": "9a643ae864d178f45fec4aa59dc98f0420894760d8a431ce0fd640b97e1c2f68",
+                  "size": 1512316,
+                  "url": "https://github.com/openecos-projects/icsprout55-pdk/releases/download/v1.10.102/ics55_LLSC_H7CL_gds.tar.bz2"
+                },
+                {
+                  "cnb_url": "https://cnb.cool/ecoslab/icsprout55-pdk/-/releases/download/v1.10.102/ics55_LLSC_H7CR_gds.tar.bz2",
+                  "dest": "IP/STD_cell/ics55_LLSC_H7C_V1p10C100/ics55_LLSC_H7CR",
+                  "path": "ics55_LLSC_H7CR_gds.tar.bz2",
+                  "sha256": "525a7a486e15e36888e4ce08887c946cd16c60dc2c90819fb493d865ed38cc2b",
+                  "size": 1489081,
+                  "url": "https://github.com/openecos-projects/icsprout55-pdk/releases/download/v1.10.102/ics55_LLSC_H7CR_gds.tar.bz2"
+                },
+                {
+                  "cnb_url": "https://cnb.cool/ecoslab/icsprout55-pdk/-/releases/download/v1.10.102/ICsprout_55LLULP1233_IO_251013_gds.tar.bz2",
+                  "dest": "IP/IO/ICsprout_55LLULP1233_IO_251013",
+                  "path": "ICsprout_55LLULP1233_IO_251013_gds.tar.bz2",
+                  "sha256": "47d248be322a6f054a0ab11fe2f2ee83ad76f9ce15d6f4cd53a81c8d08c7693b",
+                  "size": 7728902,
+                  "url": "https://github.com/openecos-projects/icsprout55-pdk/releases/download/v1.10.102/ICsprout_55LLULP1233_IO_251013_gds.tar.bz2"
+                }
+              ],
+              "sha256": "68f81ab68ff0e1e7f41ce0c7e1088605f08cd89acdd8dcfd7594b801c98a3074",
+              "size": 49757561,
+              "strip_prefix": "icsprout55-pdk-1.10.102",
+              "url": "https://github.com/openecos-projects/icsprout55-pdk/archive/refs/tags/v1.10.102.tar.gz"
+            }
+          },
+          "version": "1.10.102"
+        }
+      ]
+    }
+  ],
   "schema_version": 2,
   "tools": [
     {
-      "name": "ecc",
-      "display_name": "ECOS Chip Compiler",
-      "description": "ECOS Chip Compiler (ECC) CLI integrating Yosys, ECC-DreamPlace, ECC-Tools, and KLayout for a complete RTL-to-GDS design flow.",
       "category": "backend",
+      "description": "ECOS Chip Compiler (ECC) CLI integrating Yosys, ECC-DreamPlace, ECC-Tools, and KLayout for a complete RTL-to-GDS design flow.",
+      "display_name": "ECOS Chip Compiler",
       "homepage": "https://github.com/openecos-projects/ecc",
+      "name": "ecc",
       "versions": [
         {
-          "version": "0.1.0-alpha.12",
           "platforms": {
             "linux-x86_64": {
-              "url": "https://github.com/openecos-projects/ecc/releases/download/v0.1.0-alpha.12/ecc-cli-linux-x86_64.tar.gz",
               "sha256": "fb63d96bf83e999ace04c1d21c2e0767ab5452875651b7ccc5ddb9610c8180aa",
-              "size": 513976534
+              "size": 513976534,
+              "url": "https://github.com/openecos-projects/ecc/releases/download/v0.1.0-alpha.12/ecc-cli-linux-x86_64.tar.gz"
             }
           },
           "requires": [
             "tool:yosys",
             "pdk:ics55"
-          ]
+          ],
+          "version": "0.1.0-alpha.12"
         }
       ]
     },
     {
-      "name": "ecc-fe",
-      "display_name": "ECC-FE Frontend Flow",
-      "description": "ECOS frontend flow runtime CLI used by ECOS Studio to create workspaces and run Review, Elab, Lint, Sim, and Wave metadata steps.",
       "category": "frontend",
+      "description": "ECOS frontend flow runtime CLI used by ECOS Studio to create workspaces and run Review, Elab, Lint, Sim, and Wave metadata steps.",
+      "display_name": "ECC-FE Frontend Flow",
       "homepage": "https://github.com/openecos-projects/ecc-fe",
+      "name": "ecc-fe",
       "versions": [
         {
-          "version": "latest",
           "platforms": {
             "linux-x86_64": {
-              "url": "https://github.com/openecos-projects/ecos-resource-assets/releases/download/ecc-fe-latest/ecc-fe-latest.tar.gz",
               "metadata_url": "https://github.com/openecos-projects/ecos-resource-assets/releases/download/ecc-fe-latest/ecc-fe-latest.metadata.json",
-              "strip_prefix": "ecc-fe-latest",
               "sha256": "3afef5671a87c98b6c0a1f90f081d27ab0442ab2b9ad9824cedee39acc0f0d10",
-              "size": 22497841
+              "size": 22497841,
+              "strip_prefix": "ecc-fe-latest",
+              "url": "https://github.com/openecos-projects/ecos-resource-assets/releases/download/ecc-fe-latest/ecc-fe-latest.tar.gz"
             }
           },
           "requires": [
@@ -50,304 +155,204 @@
             "tool:slang",
             "tool:verilator",
             "tool:riscv-toolchain"
-          ]
+          ],
+          "version": "latest"
         }
       ]
     },
     {
-      "name": "ecc-fe-cpu-rtl",
-      "display_name": "ECC-FE CPU RTL Resources",
-      "description": "Installable ECC-FE third-party CPU RTL snapshots used by frontend simulation adapters.",
       "category": "frontend",
+      "description": "Installable ECC-FE third-party CPU RTL snapshots used by frontend simulation adapters.",
+      "display_name": "ECC-FE CPU RTL Resources",
       "homepage": "https://github.com/openecos-projects/ecc-fe",
+      "name": "ecc-fe-cpu-rtl",
       "versions": [
         {
-          "version": "latest",
           "platforms": {
             "linux-x86_64": {
-              "url": "https://github.com/openecos-projects/ecos-resource-assets/releases/download/ecc-fe-cpu-rtl-latest/ecc-fe-cpu-rtl-latest.tar.gz",
               "metadata_url": "https://github.com/openecos-projects/ecos-resource-assets/releases/download/ecc-fe-cpu-rtl-latest/ecc-fe-cpu-rtl-latest.metadata.json",
-              "strip_prefix": "ecc-fe-cpu-rtl-latest",
               "sha256": "afae66cc8c7cf0dfc954e8fee710b29a3e19c9d6cebdd4731140fcee71ee1a51",
-              "size": 1527780
+              "size": 1527780,
+              "strip_prefix": "ecc-fe-cpu-rtl-latest",
+              "url": "https://github.com/openecos-projects/ecos-resource-assets/releases/download/ecc-fe-cpu-rtl-latest/ecc-fe-cpu-rtl-latest.tar.gz"
             }
           },
-          "requires": []
+          "requires": [],
+          "version": "latest"
         }
       ]
     },
     {
-      "name": "ecc-fe-soc-ysyx-am",
-      "display_name": "ECC-FE YSYX AM SoC Harness",
-      "description": "Installable SoC harness resource used by ECC-FE simulation flows for CPU tests and CoreMark.",
       "category": "frontend",
+      "description": "Installable ECC-FE Spike-based difftest reference shared object used by SoC simulation flows.",
+      "display_name": "ECC-FE Difftest Reference Model",
       "homepage": "https://github.com/openecos-projects/ecc-fe",
+      "name": "ecc-fe-difftest-ref",
       "versions": [
         {
-          "version": "latest",
           "platforms": {
             "linux-x86_64": {
-              "url": "https://github.com/openecos-projects/ecos-resource-assets/releases/download/ecc-fe-soc-ysyx-am-latest/ecc-fe-soc-ysyx-am-latest.tar.gz",
+              "metadata_url": "https://github.com/openecos-projects/ecos-resource-assets/releases/download/ecc-fe-difftest-ref-latest/ecc-fe-difftest-ref-latest.metadata.json",
+              "sha256": "99aa42e058586a059d76de1bf6171e3a5d2866374afc2f26d340e3876cc7112e",
+              "size": 20658948,
+              "strip_prefix": "ecc-fe-difftest-ref-latest",
+              "url": "https://github.com/openecos-projects/ecos-resource-assets/releases/download/ecc-fe-difftest-ref-latest/ecc-fe-difftest-ref-latest.tar.gz"
+            }
+          },
+          "requires": [],
+          "version": "latest"
+        }
+      ]
+    },
+    {
+      "category": "frontend",
+      "description": "Installable ECC-FE example CPU projects and filelists used by frontend flow demos and validation.",
+      "display_name": "ECC-FE Examples",
+      "homepage": "https://github.com/openecos-projects/ecc-fe",
+      "name": "ecc-fe-examples",
+      "versions": [
+        {
+          "platforms": {
+            "linux-x86_64": {
+              "metadata_url": "https://github.com/openecos-projects/ecos-resource-assets/releases/download/ecc-fe-examples-latest/ecc-fe-examples-latest.metadata.json",
+              "sha256": "e110ee43c47cf0cf4a0d41d62332adaff46d4cb5e0fd21a1d19ccaa372eb43a7",
+              "size": 11202,
+              "strip_prefix": "ecc-fe-examples-latest",
+              "url": "https://github.com/openecos-projects/ecos-resource-assets/releases/download/ecc-fe-examples-latest/ecc-fe-examples-latest.tar.gz"
+            }
+          },
+          "requires": [],
+          "version": "latest"
+        }
+      ]
+    },
+    {
+      "category": "frontend",
+      "description": "Installable SoC harness resource used by ECC-FE simulation flows for CPU tests and CoreMark.",
+      "display_name": "ECC-FE YSYX AM SoC Harness",
+      "homepage": "https://github.com/openecos-projects/ecc-fe",
+      "name": "ecc-fe-soc-ysyx-am",
+      "versions": [
+        {
+          "platforms": {
+            "linux-x86_64": {
               "metadata_url": "https://github.com/openecos-projects/ecos-resource-assets/releases/download/ecc-fe-soc-ysyx-am-latest/ecc-fe-soc-ysyx-am-latest.metadata.json",
-              "strip_prefix": "ecc-fe-soc-ysyx-am-latest",
               "sha256": "2d2992544b4136a2e51071ce5b627f57c3526dfba9af2808d207d5f3346f8b28",
-              "size": 464520
+              "size": 464520,
+              "strip_prefix": "ecc-fe-soc-ysyx-am-latest",
+              "url": "https://github.com/openecos-projects/ecos-resource-assets/releases/download/ecc-fe-soc-ysyx-am-latest/ecc-fe-soc-ysyx-am-latest.tar.gz"
             }
           },
           "requires": [
             "tool:ecc-fe-cpu-rtl",
             "tool:ecc-fe-difftest-ref"
-          ]
+          ],
+          "version": "latest"
         }
       ]
     },
     {
-      "name": "ecc-fe-difftest-ref",
-      "display_name": "ECC-FE Difftest Reference Model",
-      "description": "Installable ECC-FE Spike-based difftest reference shared object used by SoC simulation flows.",
-      "category": "frontend",
-      "homepage": "https://github.com/openecos-projects/ecc-fe",
-      "versions": [
-        {
-          "version": "latest",
-          "platforms": {
-            "linux-x86_64": {
-              "url": "https://github.com/openecos-projects/ecos-resource-assets/releases/download/ecc-fe-difftest-ref-latest/ecc-fe-difftest-ref-latest.tar.gz",
-              "metadata_url": "https://github.com/openecos-projects/ecos-resource-assets/releases/download/ecc-fe-difftest-ref-latest/ecc-fe-difftest-ref-latest.metadata.json",
-              "strip_prefix": "ecc-fe-difftest-ref-latest",
-              "sha256": "99aa42e058586a059d76de1bf6171e3a5d2866374afc2f26d340e3876cc7112e",
-              "size": 20658948
-            }
-          },
-          "requires": []
-        }
-      ]
-    },
-    {
-      "name": "ecc-fe-examples",
-      "display_name": "ECC-FE Examples",
-      "description": "Installable ECC-FE example CPU projects and filelists used by frontend flow demos and validation.",
-      "category": "frontend",
-      "homepage": "https://github.com/openecos-projects/ecc-fe",
-      "versions": [
-        {
-          "version": "latest",
-          "platforms": {
-            "linux-x86_64": {
-              "url": "https://github.com/openecos-projects/ecos-resource-assets/releases/download/ecc-fe-examples-latest/ecc-fe-examples-latest.tar.gz",
-              "metadata_url": "https://github.com/openecos-projects/ecos-resource-assets/releases/download/ecc-fe-examples-latest/ecc-fe-examples-latest.metadata.json",
-              "strip_prefix": "ecc-fe-examples-latest",
-              "sha256": "e110ee43c47cf0cf4a0d41d62332adaff46d4cb5e0fd21a1d19ccaa372eb43a7",
-              "size": 11202
-            }
-          },
-          "requires": []
-        }
-      ]
-    },
-    {
-      "name": "yosys",
-      "display_name": "Yosys",
-      "description": "Yosys from the OSS CAD Suite distribution.",
-      "category": "synthesis",
-      "homepage": "https://github.com/YosysHQ/oss-cad-suite-build",
-      "versions": [
-        {
-          "version": "2026-05-13",
-          "platforms": {
-            "linux-x86_64": {
-              "url": "https://github.com/YosysHQ/oss-cad-suite-build/releases/download/2026-05-13/oss-cad-suite-linux-x64-20260513.tgz",
-              "sha256": "97e86fb5acce4071075854b82d9c05b78349d8afa4993fd559092986de485ea2",
-              "size": 711743679,
-              "strip_prefix": "oss-cad-suite"
-            }
-          },
-          "requires": []
-        }
-      ]
-    },
-    {
-      "name": "slang",
-      "display_name": "Slang",
-      "description": "SystemVerilog compiler and elaboration frontend used by ECC-FE ELAB and lint diagnostics.",
-      "category": "frontend",
-      "homepage": "https://github.com/MikePopoloski/slang",
-      "versions": [
-        {
-          "version": "11.0",
-          "platforms": {
-            "linux-x86_64": {
-              "url": "https://github.com/MikePopoloski/slang/releases/download/v11.0/slang-linux-x86_64.tar.gz",
-              "sha256": "951a170e10e25e54c91565030acfdfc11c3226714ebf225a18ad4166a898d8a4",
-              "size": 3514870
-            }
-          },
-          "requires": []
-        }
-      ]
-    },
-    {
-      "name": "verilator",
-      "display_name": "Verilator",
-      "description": "Pinned Verilator 5.050 SystemVerilog simulator used by ECC-FE Lint and Sim flows.",
-      "category": "simulation",
-      "homepage": "https://github.com/verilator/verilator",
-      "versions": [
-        {
-          "version": "5.050",
-          "platforms": {
-            "linux-x86_64": {
-              "url": "https://github.com/openecos-projects/ecos-resource-assets/releases/download/verilator-v5.050/verilator-v5.050-linux-x86_64.tar.gz",
-              "sha256": "d0f622e00fec777c84e616eea69a1689b552534487d642107c646b05b7d46d52",
-              "size": 6413405,
-              "strip_prefix": "verilator-v5.050-linux-x86_64"
-            }
-          },
-          "requires": []
-        }
-      ]
-    },
-    {
-      "name": "riscv-toolchain",
-      "display_name": "RISC-V GCC & Binutils Toolchain",
-      "description": "Pinned RISC-V GNU bare-metal toolchain providing GCC, LD, objdump, and objcopy for CPU tests, CoreMark, ELF binaries, and source-aware disassembly.",
       "category": "toolchain",
+      "description": "Pinned RISC-V GNU bare-metal toolchain providing GCC, LD, objdump, and objcopy for CPU tests, CoreMark, ELF binaries, and source-aware disassembly.",
+      "display_name": "RISC-V GCC & Binutils Toolchain",
       "homepage": "https://github.com/riscv-collab/riscv-gnu-toolchain",
+      "name": "riscv-toolchain",
       "versions": [
         {
-          "version": "2026.06.06",
           "platforms": {
             "linux-x86_64": {
-              "url": "https://github.com/riscv-collab/riscv-gnu-toolchain/releases/download/2026.06.06/riscv64-elf-ubuntu-22.04-gcc.tar.xz",
               "sha256": "231ba19378a27f19724805cf5e8b5917064ea9b89f87d7829009fd514369e2ef",
               "size": 540298396,
-              "strip_prefix": "riscv"
+              "strip_prefix": "riscv",
+              "url": "https://github.com/riscv-collab/riscv-gnu-toolchain/releases/download/2026.06.06/riscv64-elf-ubuntu-22.04-gcc.tar.xz"
             }
           },
-          "requires": []
+          "requires": [],
+          "version": "2026.06.06"
         }
       ]
     },
     {
-      "name": "surfer",
-      "display_name": "Surfer Web Assets",
-      "description": "Offline Surfer waveform viewer web assets used by ECOS Studio Wave.",
-      "category": "viewer",
-      "homepage": "https://github.com/Luyoung0001/surfer",
+      "category": "frontend",
+      "description": "SystemVerilog compiler and elaboration frontend used by ECC-FE ELAB and lint diagnostics.",
+      "display_name": "Slang",
+      "homepage": "https://github.com/MikePopoloski/slang",
+      "name": "slang",
       "versions": [
         {
-          "version": "latest",
           "platforms": {
             "linux-x86_64": {
-              "url": "https://github.com/openecos-projects/ecos-resource-assets/releases/download/surfer-latest/surfer-latest.tar.gz",
-              "metadata_url": "https://github.com/openecos-projects/ecos-resource-assets/releases/download/surfer-latest/surfer-latest.metadata.json",
-              "strip_prefix": "surfer-latest",
-              "sha256": "1f07b73cafbc858531ac20f2be5d0ecc464bd0c3f3d6409b8bc6ec6ef86b8fa5",
-              "size": 2769731
+              "sha256": "951a170e10e25e54c91565030acfdfc11c3226714ebf225a18ad4166a898d8a4",
+              "size": 3514870,
+              "url": "https://github.com/MikePopoloski/slang/releases/download/v11.0/slang-linux-x86_64.tar.gz"
             }
           },
-          "requires": []
+          "requires": [],
+          "version": "11.0"
         }
       ]
-    }
-  ],
-  "pdks": [
+    },
     {
-      "id": "ics55",
-      "display_name": "ICsprout 55nm PDK",
-      "description": "ICsprout 55nm open-source process design kit.",
-      "category": "pdk",
-      "homepage": "https://github.com/openecos-projects/icsprout55-pdk",
+      "category": "viewer",
+      "description": "Offline Surfer waveform viewer web assets used by ECOS Studio Wave.",
+      "display_name": "Surfer Web Assets",
+      "homepage": "https://github.com/Luyoung0001/surfer",
+      "name": "surfer",
       "versions": [
         {
-          "version": "1.10.102",
           "platforms": {
-            "all-platform": {
-              "url": "https://github.com/openecos-projects/icsprout55-pdk/archive/refs/tags/v1.10.102.tar.gz",
-              "sha256": "68f81ab68ff0e1e7f41ce0c7e1088605f08cd89acdd8dcfd7594b801c98a3074",
-              "size": 49757561,
-              "strip_prefix": "icsprout55-pdk-1.10.102",
-              "supplemental_assets": [
-                {
-                  "path": "ics55_LLSC_H7CH_gds.tar.bz2",
-                  "url": "https://github.com/openecos-projects/icsprout55-pdk/releases/download/v1.10.102/ics55_LLSC_H7CH_gds.tar.bz2",
-                  "sha256": "6268684fdd0784087adc1a972125f9001bc9761c3142ab954d2a9eade53d5490",
-                  "size": 1502685
-                },
-                {
-                  "path": "ics55_LLSC_H7CH_liberty.tar.bz2",
-                  "url": "https://github.com/openecos-projects/icsprout55-pdk/releases/download/v1.10.102/ics55_LLSC_H7CH_liberty.tar.bz2",
-                  "sha256": "bb79e74960dec7032295e621933410f51963b9cafbd956a196148d44fe27fb2c",
-                  "size": 76358374
-                },
-                {
-                  "path": "ics55_LLSC_H7CL_gds.tar.bz2",
-                  "url": "https://github.com/openecos-projects/icsprout55-pdk/releases/download/v1.10.102/ics55_LLSC_H7CL_gds.tar.bz2",
-                  "sha256": "9a643ae864d178f45fec4aa59dc98f0420894760d8a431ce0fd640b97e1c2f68",
-                  "size": 1512316
-                },
-                {
-                  "path": "ics55_LLSC_H7CL_liberty.tar.bz2",
-                  "url": "https://github.com/openecos-projects/icsprout55-pdk/releases/download/v1.10.102/ics55_LLSC_H7CL_liberty.tar.bz2",
-                  "sha256": "c2e7a1eea77772582414108fce178a0f444a61bd4e3ce0a2811ef27caa719fa8",
-                  "size": 77546993
-                },
-                {
-                  "path": "ics55_LLSC_H7CR_gds.tar.bz2",
-                  "url": "https://github.com/openecos-projects/icsprout55-pdk/releases/download/v1.10.102/ics55_LLSC_H7CR_gds.tar.bz2",
-                  "sha256": "525a7a486e15e36888e4ce08887c946cd16c60dc2c90819fb493d865ed38cc2b",
-                  "size": 1489081
-                },
-                {
-                  "path": "ics55_LLSC_H7CR_liberty.tar.bz2",
-                  "url": "https://github.com/openecos-projects/icsprout55-pdk/releases/download/v1.10.102/ics55_LLSC_H7CR_liberty.tar.bz2",
-                  "sha256": "ef33eec4cd5f617d3dd0073122e556df06560dd65eebf805648640038dedc2b7",
-                  "size": 76996026
-                },
-                {
-                  "path": "ICsprout_55LLULP1233_IO_251013_gds.tar.bz2",
-                  "url": "https://github.com/openecos-projects/icsprout55-pdk/releases/download/v1.10.102/ICsprout_55LLULP1233_IO_251013_gds.tar.bz2",
-                  "sha256": "47d248be322a6f054a0ab11fe2f2ee83ad76f9ce15d6f4cd53a81c8d08c7693b",
-                  "size": 7728902
-                }
-              ],
-              "post_install": [
-                {
-                  "command": [
-                    "make",
-                    "unzip"
-                  ],
-                  "cwd": "."
-                }
-              ]
+            "linux-x86_64": {
+              "metadata_url": "https://github.com/openecos-projects/ecos-resource-assets/releases/download/surfer-latest/surfer-latest.metadata.json",
+              "sha256": "1f07b73cafbc858531ac20f2be5d0ecc464bd0c3f3d6409b8bc6ec6ef86b8fa5",
+              "size": 2769731,
+              "strip_prefix": "surfer-latest",
+              "url": "https://github.com/openecos-projects/ecos-resource-assets/releases/download/surfer-latest/surfer-latest.tar.gz"
             }
-          }
+          },
+          "requires": [],
+          "version": "latest"
         }
       ]
-    }
-  ],
-  "mpcs": [
+    },
     {
-      "id": "mpc-frame",
-      "display_name": "MPC Frame",
-      "description": "Multi-project chip frame template and reference SoC design.",
-      "category": "mpc",
-      "homepage": "https://github.com/openecos-projects/mpc-frame",
+      "category": "simulation",
+      "description": "Pinned Verilator 5.050 SystemVerilog simulator used by ECC-FE Lint and Sim flows.",
+      "display_name": "Verilator",
+      "homepage": "https://github.com/verilator/verilator",
+      "name": "verilator",
       "versions": [
         {
-          "version": "0.1.0",
           "platforms": {
-            "all-platform": {
-              "url": "https://github.com/openecos-projects/mpc-frame/archive/01ac0615e3b6d73db605afaf7c67851ef0cf5767.tar.gz",
-              "sha256": "ead5db9dcbc081fd11e0549d6093d1f0190014bd818d28cf23be631d33b16dc0",
-              "size": 486715,
-              "strip_prefix": "mpc-frame-01ac0615e3b6d73db605afaf7c67851ef0cf5767",
-              "update_source": {
-                "type": "github_branch",
-                "branch": "main"
-              }
+            "linux-x86_64": {
+              "sha256": "d0f622e00fec777c84e616eea69a1689b552534487d642107c646b05b7d46d52",
+              "size": 6413405,
+              "strip_prefix": "verilator-v5.050-linux-x86_64",
+              "url": "https://github.com/openecos-projects/ecos-resource-assets/releases/download/verilator-v5.050/verilator-v5.050-linux-x86_64.tar.gz"
             }
-          }
+          },
+          "requires": [],
+          "version": "5.050"
+        }
+      ]
+    },
+    {
+      "category": "synthesis",
+      "description": "Yosys from the OSS CAD Suite distribution.",
+      "display_name": "Yosys",
+      "homepage": "https://github.com/YosysHQ/oss-cad-suite-build",
+      "name": "yosys",
+      "versions": [
+        {
+          "platforms": {
+            "linux-x86_64": {
+              "sha256": "c3ffafe1549d5bf321b85e6ac30b3bc6af0af72093d5f45117380bcc0645a8e2",
+              "size": 740836017,
+              "strip_prefix": "oss-cad-suite",
+              "url": "https://github.com/YosysHQ/oss-cad-suite-build/releases/download/2026-08-27/oss-cad-suite-linux-x64-20260827.tgz"
+            }
+          },
+          "requires": [],
+          "version": "20260827"
         }
       ]
     }
