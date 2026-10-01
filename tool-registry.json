@@ -252,6 +252,27 @@
       ]
     },
     {
+      "category": "formal",
+      "description": "Kepler formal verification tool (nightly unstable channel).",
+      "display_name": "Kepler Formal",
+      "homepage": "https://github.com/openecos-projects/kepler-formal",
+      "name": "kepler-formal",
+      "versions": [
+        {
+          "platforms": {
+            "linux-x86_64": {
+              "sha256": "56d90fbb3e5845adf67c5edbea5079426cb449d9c4c025a9a8adee42c67ac0b0",
+              "size": 6531750,
+              "strip_prefix": "kepler-formal-0.5.0-nightly.20260928-linux-x86_64",
+              "url": "https://github.com/openecos-projects/kepler-formal/releases/download/v0.5.0-nightly.20260928/kepler-formal-0.5.0-nightly.20260928-linux-x86_64.tar.gz"
+            }
+          },
+          "requires": [],
+          "version": "0.5.0-nightly.20260928"
+        }
+      ]
+    },
+    {
       "category": "toolchain",
       "description": "Pinned RISC-V GNU bare-metal toolchain providing GCC, LD, objdump, and objcopy for CPU tests, CoreMark, ELF binaries, and source-aware disassembly.",
       "display_name": "RISC-V GCC & Binutils Toolchain",
