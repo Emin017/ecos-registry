@@ -261,14 +261,14 @@
         {
           "platforms": {
             "linux-x86_64": {
-              "sha256": "56d90fbb3e5845adf67c5edbea5079426cb449d9c4c025a9a8adee42c67ac0b0",
-              "size": 6531750,
-              "strip_prefix": "kepler-formal-0.5.0-nightly.20260928-linux-x86_64",
-              "url": "https://github.com/openecos-projects/kepler-formal/releases/download/v0.5.0-nightly.20260928/kepler-formal-0.5.0-nightly.20260928-linux-x86_64.tar.gz"
+              "sha256": "1e8ed98e1a635bc21497b63a89cf96410a7a5489d016ea29e7da69c96d9673ae",
+              "size": 8914916,
+              "strip_prefix": "kepler-formal-0.5.0-nightly.20260929-linux-x86_64",
+              "url": "https://github.com/openecos-projects/kepler-formal/releases/download/v0.5.0-nightly.20260929/kepler-formal-0.5.0-nightly.20260929-linux-x86_64.tar.gz"
             }
           },
           "requires": [],
-          "version": "0.5.0-nightly.20260928"
+          "version": "0.5.0-nightly.20260929"
         }
       ]
     },
