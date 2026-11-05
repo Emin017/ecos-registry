@@ -36,6 +36,9 @@
         {
           "platforms": {
             "all-platform": {
+              "cnb_sha256": "9bd412cee21a3b89dad0765723b5d4fba2936c41b1bbea1600eba7ba192221ad",
+              "cnb_strip_prefix": "",
+              "cnb_url": "https://cnb.cool/ecoslab/icsprout55-pdk/-/git/archive/v1.10.102.tar.gz",
               "packages": [
                 {
                   "cnb_url": "https://cnb.cool/ecoslab/icsprout55-pdk/-/releases/download/v1.10.102/ics55_LLSC_H7CH_liberty.tar.bz2",
@@ -117,6 +120,7 @@
         {
           "platforms": {
             "linux-x86_64": {
+              "cnb_url": "https://cnb.cool/ecoslab/ecc/-/releases/download/v0.1.0-alpha.12/ecc-cli-linux-x86_64.tar.gz",
               "sha256": "fb63d96bf83e999ace04c1d21c2e0767ab5452875651b7ccc5ddb9610c8180aa",
               "size": 513976534,
               "url": "https://github.com/openecos-projects/ecc/releases/download/v0.1.0-alpha.12/ecc-cli-linux-x86_64.tar.gz"
@@ -261,6 +265,7 @@
         {
           "platforms": {
             "linux-x86_64": {
+              "cnb_url": "https://cnb.cool/ecoslab/kepler-formal/-/releases/download/v0.5.0-nightly.20260929/kepler-formal-0.5.0-nightly.20260929-linux-x86_64.tar.gz",
               "sha256": "1e8ed98e1a635bc21497b63a89cf96410a7a5489d016ea29e7da69c96d9673ae",
               "size": 8914916,
               "strip_prefix": "kepler-formal-0.5.0-nightly.20260929-linux-x86_64",
@@ -366,6 +371,7 @@
         {
           "platforms": {
             "linux-x86_64": {
+              "cnb_url": "https://cnb.cool/ecoslab/oss-cad-suite-build/-/releases/download/2026-08-27/oss-cad-suite-linux-x64-20260827.tgz",
               "sha256": "c3ffafe1549d5bf321b85e6ac30b3bc6af0af72093d5f45117380bcc0645a8e2",
               "size": 740836017,
               "strip_prefix": "oss-cad-suite",
