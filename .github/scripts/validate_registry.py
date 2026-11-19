@@ -383,6 +383,18 @@ def _validate_platforms(
         url_path = f"{platform_path}.url"
         if _validate_platform_url(platform.get("url"), url_path, errors):
             asset_urls.append(AssetUrl(path=url_path, url=platform["url"]))
+        if "cnb_url" in platform:
+            mirror_path = f"{platform_path}.cnb_url"
+            if _validate_platform_url(platform["cnb_url"], mirror_path, errors):
+                asset_urls.append(AssetUrl(path=mirror_path, url=platform["cnb_url"]))
+        if "cnb_sha256" in platform:
+            _validate_sha256(platform["cnb_sha256"], f"{platform_path}.cnb_sha256", errors)
+        if "cnb_strip_prefix" in platform:
+            prefix = platform["cnb_strip_prefix"]
+            if prefix != "" and _relative_path_issue(prefix, require_normalized=True):
+                errors.append(
+                    f"{platform_path}.cnb_strip_prefix: must be a normalized relative path or empty"
+                )
         for field in ("metadata_url", "sha256_url"):
             if field in platform:
                 sidecar_path = f"{platform_path}.{field}"
@@ -628,6 +640,8 @@ def _validate_packages(
                 seen_paths[relative_path] = f"{package_path}.path"
 
         for url_field in ("url", "cnb_url"):
+            if url_field == "cnb_url" and url_field not in package:
+                continue
             url_path = f"{package_path}.{url_field}"
             if _validate_platform_url(package.get(url_field), url_path, errors):
                 asset_urls.append(AssetUrl(path=url_path, url=package[url_field]))
