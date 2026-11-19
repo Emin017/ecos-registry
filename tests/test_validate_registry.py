@@ -662,7 +662,7 @@ class ValidateRegistryOfflineTests(unittest.TestCase):
             errors, "packages[3].path: duplicate path 'locked/asset.tar.bz2'"
         )
         self.assert_has_error(errors, "packages[4].url: missing required field")
-        self.assert_has_error(errors, "packages[4].cnb_url: missing required field")
+        self.assertFalse(any("packages[4].cnb_url" in error for error in errors))
         self.assert_has_error(errors, "packages[4].sha256: missing required field")
         self.assert_has_error(errors, "packages[4].size: missing required field")
         self.assert_has_error(errors, "packages[4].dest: missing required field")
