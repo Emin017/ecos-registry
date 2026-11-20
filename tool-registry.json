@@ -38,6 +38,133 @@
             "all-platform": {
               "packages": [
                 {
+                  "dest": "IP/STD_cell/ICsprout55_SC9T_BASIC_HVT",
+                  "path": "ICsprout55_SC9T_BASIC_HVT_gds.tar.bz2",
+                  "sha256": "f6d35ce66ef81a0c0df55095ce5c2a3f203fe168ae5fbeca3b8ceddfa5ea8e52",
+                  "size": 607501,
+                  "url": "https://github.com/openecos-projects/icsprout55-pdk/releases/download/v2-2026.10.28/ICsprout55_SC9T_BASIC_HVT_gds.tar.bz2"
+                },
+                {
+                  "dest": "IP/STD_cell/ICsprout55_SC9T_BASIC_HVT",
+                  "path": "ICsprout55_SC9T_BASIC_HVT_liberty_nldm.tar.bz2",
+                  "sha256": "16e02950ac4a7e5acce93d16a6ef6969eba850945ae9f58fc44fefb7d0cbcb23",
+                  "size": 184001912,
+                  "url": "https://github.com/openecos-projects/icsprout55-pdk/releases/download/v2-2026.10.28/ICsprout55_SC9T_BASIC_HVT_liberty_nldm.tar.bz2"
+                },
+                {
+                  "dest": "IP/STD_cell/ICsprout55_SC9T_BASIC_LVT",
+                  "path": "ICsprout55_SC9T_BASIC_LVT_gds.tar.bz2",
+                  "sha256": "4ad67827660f2da4fb8796913d0399d97e3bd7283f613d5c2f3d90c374f251f4",
+                  "size": 605745,
+                  "url": "https://github.com/openecos-projects/icsprout55-pdk/releases/download/v2-2026.10.28/ICsprout55_SC9T_BASIC_LVT_gds.tar.bz2"
+                },
+                {
+                  "dest": "IP/STD_cell/ICsprout55_SC9T_BASIC_LVT",
+                  "path": "ICsprout55_SC9T_BASIC_LVT_liberty_nldm.tar.bz2",
+                  "sha256": "74268fa209ff53150538a6ad21d040396bfaf9e24867899a987aa415396e5418",
+                  "size": 187110164,
+                  "url": "https://github.com/openecos-projects/icsprout55-pdk/releases/download/v2-2026.10.28/ICsprout55_SC9T_BASIC_LVT_liberty_nldm.tar.bz2"
+                },
+                {
+                  "dest": "IP/STD_cell/ICsprout55_SC9T_BASIC_SVT",
+                  "path": "ICsprout55_SC9T_BASIC_SVT_gds.tar.bz2",
+                  "sha256": "d1a144f52280cff147f4cf9db4182844e5575470d102153ff447473ec35381da",
+                  "size": 603478,
+                  "url": "https://github.com/openecos-projects/icsprout55-pdk/releases/download/v2-2026.10.28/ICsprout55_SC9T_BASIC_SVT_gds.tar.bz2"
+                },
+                {
+                  "dest": "IP/STD_cell/ICsprout55_SC9T_BASIC_SVT",
+                  "path": "ICsprout55_SC9T_BASIC_SVT_liberty_nldm.tar.bz2",
+                  "sha256": "8ce6157b70e9e85e03b66525ed2fd3a88f630393483b40d3799555cb869c125c",
+                  "size": 185469982,
+                  "url": "https://github.com/openecos-projects/icsprout55-pdk/releases/download/v2-2026.10.28/ICsprout55_SC9T_BASIC_SVT_liberty_nldm.tar.bz2"
+                },
+                {
+                  "dest": "IP/IO",
+                  "path": "ICsprout_55LLULP1225_IO_0901_gds.tar.bz2",
+                  "sha256": "75279cf7e322b8a10094c5d1c5741450e1de1e592b64c64aecb3b21de990c0bf",
+                  "size": 4433022,
+                  "url": "https://github.com/openecos-projects/icsprout55-pdk/releases/download/v2-2026.10.28/ICsprout_55LLULP1225_IO_0901_gds.tar.bz2"
+                }
+              ],
+              "sha256": "a2ef3c1e4c8fd5b57a80c350c68aff9ac8319ad5df92fa98608efd02d81a3e4d",
+              "size": 7519708,
+              "strip_prefix": "icsprout55-pdk-9t",
+              "url": "https://github.com/openecos-projects/icsprout55-pdk/releases/download/v2-2026.10.28-r1/icsprout55-pdk-v2-2026.10.28-r1.tar.gz"
+            }
+          },
+          "version": "2.0.0"
+        },
+        {
+          "platforms": {
+            "all-platform": {
+              "packages": [
+                {
+                  "dest": "IP/IO",
+                  "path": "ICsprout_55LLULP1233_IO_251013_gds.tar.bz2",
+                  "sha256": "47d248be322a6f054a0ab11fe2f2ee83ad76f9ce15d6f4cd53a81c8d08c7693b",
+                  "size": 7728902,
+                  "url": "https://github.com/openecos-projects/icsprout55-pdk/releases/download/v1.10.103/ICsprout_55LLULP1233_IO_251013_gds.tar.bz2"
+                },
+                {
+                  "dest": "IP/STD_cell/ics55_LLSC_H7C_V1p10C100/ics55_LLSC_H7CH",
+                  "path": "ics55_LLSC_H7CH_gds.tar.bz2",
+                  "sha256": "6268684fdd0784087adc1a972125f9001bc9761c3142ab954d2a9eade53d5490",
+                  "size": 1502685,
+                  "url": "https://github.com/openecos-projects/icsprout55-pdk/releases/download/v1.10.103/ics55_LLSC_H7CH_gds.tar.bz2"
+                },
+                {
+                  "dest": "IP/STD_cell/ics55_LLSC_H7C_V1p10C100/ics55_LLSC_H7CH",
+                  "path": "ics55_LLSC_H7CH_liberty.tar.bz2",
+                  "sha256": "9c06a04e52af68163ec027b6f0054e3c896b0f18a9cac699aad1813b7b65e481",
+                  "size": 76349757,
+                  "url": "https://github.com/openecos-projects/icsprout55-pdk/releases/download/v1.10.103/ics55_LLSC_H7CH_liberty.tar.bz2"
+                },
+                {
+                  "dest": "IP/STD_cell/ics55_LLSC_H7C_V1p10C100/ics55_LLSC_H7CL",
+                  "path": "ics55_LLSC_H7CL_gds.tar.bz2",
+                  "sha256": "9a643ae864d178f45fec4aa59dc98f0420894760d8a431ce0fd640b97e1c2f68",
+                  "size": 1512316,
+                  "url": "https://github.com/openecos-projects/icsprout55-pdk/releases/download/v1.10.103/ics55_LLSC_H7CL_gds.tar.bz2"
+                },
+                {
+                  "dest": "IP/STD_cell/ics55_LLSC_H7C_V1p10C100/ics55_LLSC_H7CL",
+                  "path": "ics55_LLSC_H7CL_liberty.tar.bz2",
+                  "sha256": "5b064b347aabe1cf1da1406ad6be59fd505bcc83601d6b40cb13196fb87a6e79",
+                  "size": 77518208,
+                  "url": "https://github.com/openecos-projects/icsprout55-pdk/releases/download/v1.10.103/ics55_LLSC_H7CL_liberty.tar.bz2"
+                },
+                {
+                  "dest": "IP/STD_cell/ics55_LLSC_H7C_V1p10C100/ics55_LLSC_H7CR",
+                  "path": "ics55_LLSC_H7CR_gds.tar.bz2",
+                  "sha256": "525a7a486e15e36888e4ce08887c946cd16c60dc2c90819fb493d865ed38cc2b",
+                  "size": 1489081,
+                  "url": "https://github.com/openecos-projects/icsprout55-pdk/releases/download/v1.10.103/ics55_LLSC_H7CR_gds.tar.bz2"
+                },
+                {
+                  "dest": "IP/STD_cell/ics55_LLSC_H7C_V1p10C100/ics55_LLSC_H7CR",
+                  "path": "ics55_LLSC_H7CR_liberty.tar.bz2",
+                  "sha256": "6c6b9c2102a7efd885558dd60892fdb6d2f9dad81a63ec872c06e398ab262fbf",
+                  "size": 77009428,
+                  "url": "https://github.com/openecos-projects/icsprout55-pdk/releases/download/v1.10.103/ics55_LLSC_H7CR_liberty.tar.bz2"
+                }
+              ],
+              "sha256": "4509450a0929ec1eb557353e7b8e4876675e23dcb53e991d775f1dbeb4d56f30",
+              "size": 55467643,
+              "strip_prefix": "icsprout55-pdk-7t",
+              "url": "https://github.com/openecos-projects/icsprout55-pdk/releases/download/v1.10.103-r2/icsprout55-pdk-v1.10.103-r2.tar.gz"
+            }
+          },
+          "version": "1.10.103"
+        },
+        {
+          "platforms": {
+            "all-platform": {
+              "cnb_sha256": "9bd412cee21a3b89dad0765723b5d4fba2936c41b1bbea1600eba7ba192221ad",
+              "cnb_strip_prefix": "",
+              "cnb_url": "https://cnb.cool/ecoslab/icsprout55-pdk/-/git/archive/v1.10.102.tar.gz",
+              "packages": [
+                {
                   "cnb_url": "https://cnb.cool/ecoslab/icsprout55-pdk/-/releases/download/v1.10.102/ics55_LLSC_H7CH_liberty.tar.bz2",
                   "dest": "IP/STD_cell/ics55_LLSC_H7C_V1p10C100/ics55_LLSC_H7CH",
                   "path": "ics55_LLSC_H7CH_liberty.tar.bz2",
@@ -117,6 +244,7 @@
         {
           "platforms": {
             "linux-x86_64": {
+              "cnb_url": "https://cnb.cool/ecoslab/ecc/-/releases/download/v0.1.0-alpha.12/ecc-cli-linux-x86_64.tar.gz",
               "sha256": "fb63d96bf83e999ace04c1d21c2e0767ab5452875651b7ccc5ddb9610c8180aa",
               "size": 513976534,
               "url": "https://github.com/openecos-projects/ecc/releases/download/v0.1.0-alpha.12/ecc-cli-linux-x86_64.tar.gz"
@@ -261,6 +389,7 @@
         {
           "platforms": {
             "linux-x86_64": {
+              "cnb_url": "https://cnb.cool/ecoslab/kepler-formal/-/releases/download/v0.5.0-nightly.20260929/kepler-formal-0.5.0-nightly.20260929-linux-x86_64.tar.gz",
               "sha256": "1e8ed98e1a635bc21497b63a89cf96410a7a5489d016ea29e7da69c96d9673ae",
               "size": 8914916,
               "strip_prefix": "kepler-formal-0.5.0-nightly.20260929-linux-x86_64",
@@ -366,6 +495,7 @@
         {
           "platforms": {
             "linux-x86_64": {
+              "cnb_url": "https://cnb.cool/ecoslab/oss-cad-suite-build/-/releases/download/2026-08-27/oss-cad-suite-linux-x64-20260827.tgz",
               "sha256": "c3ffafe1549d5bf321b85e6ac30b3bc6af0af72093d5f45117380bcc0645a8e2",
               "size": 740836017,
               "strip_prefix": "oss-cad-suite",
