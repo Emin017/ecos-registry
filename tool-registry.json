@@ -269,8 +269,8 @@
           "platforms": {
             "linux-x86_64": {
               "metadata_url": "https://github.com/openecos-projects/ecos-resource-assets/releases/download/ecc-fe-latest/ecc-fe-latest.metadata.json",
-              "sha256": "dc719036203c8f3e15392feae721a1fe966508c7888539e601da8c955550140d",
-              "size": 24508159,
+              "sha256": "77cd7960c132b4abfe3d16030e43cee7e00bd39faf23daf0198709fecff72e87",
+              "size": 24510927,
               "strip_prefix": "ecc-fe-latest",
               "url": "https://github.com/openecos-projects/ecos-resource-assets/releases/download/ecc-fe-latest/ecc-fe-latest.tar.gz"
             }
